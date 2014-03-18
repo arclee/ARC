@@ -18,6 +18,7 @@ public class arcErrCollectorEditor : Editor
 
 	public override void OnInspectorGUI ()
 	{
+
 		GUILayout.BeginHorizontal();
 		//enable.
 		arcErrCollector.mEnable = GUILayout.Toggle(arcErrCollector.mEnable, "Enable");
@@ -34,10 +35,11 @@ public class arcErrCollectorEditor : Editor
 		scrollpos = GUILayout.BeginScrollView(scrollpos);
 	
 		for (int i = 0; i < arcErrCollector.mNullErrorObjs.Count; i++)
-		{			
-			if (GUILayout.Button(arcErrCollector.mNullErrorObjs[i].msg))
+		{
+			arcErrCollector.ErrorData ed = arcErrCollector.mNullErrorObjs[i];
+			if (GUILayout.Button(ed.msg) && (ed.obj != null))
 			{
-				EditorGUIUtility.PingObject(arcErrCollector.mNullErrorObjs[i].obj);
+				EditorGUIUtility.PingObject(ed.obj);
 			}
 		}
 		GUILayout.EndScrollView();

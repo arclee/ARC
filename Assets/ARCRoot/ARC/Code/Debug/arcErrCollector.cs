@@ -3,9 +3,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+
 public sealed class arcErrCollector : arcSingleton<arcErrCollector>
 {
-	static public bool mEnable = false;
+	static public bool mEnable = true;
 
 	private arcErrCollector()
 	{

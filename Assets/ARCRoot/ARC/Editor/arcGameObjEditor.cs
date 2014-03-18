@@ -14,12 +14,12 @@ public class arcGameObjEditor : MonoBehaviour {
 	
 	}
 		
-	[MenuItem("GameObject/Create Other/ARC/GameObject", false, 13000)]
+	[MenuItem(arcMenu.GameObjectRoot + "GameObject", false, 13000)]
 	static void DoCreateSpriteObject()
 	{
 		
 		GameObject go = new GameObject("arcGameObject");
-		arcGameObject script = go.AddComponent<arcGameObject>();
+		go.AddComponent<arcGameObject>();
 		Selection.activeGameObject = go;
 		Undo.RegisterCreatedObjectUndo(go, "Create arcGameObject");
 

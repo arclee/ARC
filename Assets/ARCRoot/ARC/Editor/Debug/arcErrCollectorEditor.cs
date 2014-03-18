@@ -19,14 +19,17 @@ public class arcErrCollectorEditor : Editor
 	public override void OnInspectorGUI ()
 	{
 		GUILayout.BeginHorizontal();
+		//enable.
 		arcErrCollector.mEnable = GUILayout.Toggle(arcErrCollector.mEnable, "Enable");
 
+		//清 log.
 		if (GUILayout.Button("Clear log"))
 		{
 			arcErrCollector.Clear();
 		}
 		GUILayout.EndHorizontal();
 
+		//log.
 		GUILayout.BeginHorizontal();
 		scrollpos = GUILayout.BeginScrollView(scrollpos);
 	

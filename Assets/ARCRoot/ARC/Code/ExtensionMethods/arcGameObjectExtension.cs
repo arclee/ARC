@@ -17,7 +17,7 @@ public static class arcGameObjectExtension
 			Debug.Log("Expected to find component of type " 
 			               + typeof(I) + " but found none", obj);
 
-			arcErrCollector.Add(obj, "Expected to find component");
+			arcErrCollector.Add("Expected to find component", obj, "");
 		}
 		
 		return comp;

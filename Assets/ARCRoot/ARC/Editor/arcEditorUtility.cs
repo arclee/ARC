@@ -6,7 +6,7 @@ using System.Collections;
 public static class arcEditorUtility
 {
 	
-	[MenuItem(arcMenu.GameObjectRoot + "About", false, 14000)]
+	[MenuItem(arcMenu.WindowRoot + "About", false, 14000)]
 	public static void About2DToolkit()
 	{
 		EditorUtility.DisplayDialog("About ARC",

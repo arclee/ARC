@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -16,7 +15,8 @@ public sealed class arcErrCollector : arcSingleton<arcErrCollector>
 	public class ErrorData
 	{
 		public GameObject obj = null;
-		public String msg;
+		public string msg;
+		public string filepathname;
 	}
 
 	static public List<ErrorData> mNullErrorObjs = new List<ErrorData>();
@@ -27,7 +27,7 @@ public sealed class arcErrCollector : arcSingleton<arcErrCollector>
 
 	}
 
-	static public void Add(GameObject obj, String errmsg)
+	static public void Add(string errmsg, GameObject obj, string filepathname)
 	{
 		if (!mEnable)
 		{
@@ -36,6 +36,7 @@ public sealed class arcErrCollector : arcSingleton<arcErrCollector>
 		ErrorData ed = new ErrorData();
 		ed.obj = obj;
 		ed.msg = errmsg;
+		ed.filepathname = filepathname;
 
 		mNullErrorObjs.Add(ed);
 

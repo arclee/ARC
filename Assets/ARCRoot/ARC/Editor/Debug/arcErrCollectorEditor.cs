@@ -5,7 +5,8 @@ using System.Collections;
 [CustomEditor(typeof(arcErrCollector))]
 public class arcErrCollectorEditor : Editor
 {
-
+	//只顯示 enable.
+#if null
 	Vector2 scrollpos;
 	//arcNullErrCollector mtarget = null;
 
@@ -51,6 +52,17 @@ public class arcErrCollectorEditor : Editor
 //			EditorUtility.SetDirty(mtarget);			
 //		}
 	}
+
+
+#else
+
+	public override void OnInspectorGUI ()
+	{
+		//enable.
+		arcErrCollector.mEnable = GUILayout.Toggle(arcErrCollector.mEnable, "Enable");
+
+	}
+#endif
 
 	
 	[MenuItem(arcMenu.GameObjectRoot + "Debug/arcErrCollector", false, 13000)]

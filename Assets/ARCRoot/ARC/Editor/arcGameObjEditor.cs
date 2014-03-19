@@ -13,15 +13,15 @@ public class arcGameObjEditor : MonoBehaviour {
 	void Update () {
 	
 	}
-		
-	[MenuItem(arcMenu.GameObjectRoot + "GameObject", false, 13000)]
-	static void DoCreateSpriteObject()
-	{
-		
-		GameObject go = new GameObject("arcGameObject");
-		go.AddComponent<arcGameObject>();
-		Selection.activeGameObject = go;
-		Undo.RegisterCreatedObjectUndo(go, "Create arcGameObject");
-
-	}
+//		
+//	[MenuItem(arcMenu.GameObjectRoot + "GameObject", false, 13000)]
+//	static void DoCreateSpriteObject()
+//	{
+//		
+//		GameObject go = new GameObject("arcGameObject");
+//		go.AddComponent<arcGameObject>();
+//		Selection.activeGameObject = go;
+//		Undo.RegisterCreatedObjectUndo(go, "Create arcGameObject");
+//
+//	}
 }

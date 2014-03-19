@@ -13,9 +13,12 @@ public static class arcUtility
 	{
 		if (!typeof(T).IsSerializable)
 		{
-			StackFrame frame = new StackFrame(1);
+			
+			StackTrace stackTrace = new StackTrace(true);           // get call stack
+			StackFrame[] stackFrames = stackTrace.GetFrames();  // get method calls (frames)
+			StackFrame frame = stackFrames[1];
 
-			arcErrCollector.Add(null, "The type must be serializable: " + frame.GetMethod().DeclaringType.ToString()+ "." + frame.GetMethod().Name );
+			arcErrCollector.Add("The type must be serializable: " + frame.GetMethod().DeclaringType.ToString()+ "." + frame.GetMethod().Name, null, frame.GetFileName());
 			return default(T);
 		}
 		

@@ -12,7 +12,7 @@ public class arcFindObjectWin : EditorWindow
 
 	
 	//find.
-	string [] mFindTypeStrs = { "Component", "Tag", "Layer"};
+	string [] mFindTypeStrs = { "Component", "Tag", "Layer", "SortingLayer"};
 
 	class FindData
 	{
@@ -166,6 +166,18 @@ public class arcFindObjectWin : EditorWindow
 			{
 				return true;
 			}
+			break;
+		}
+		case 3 :
+		{
+			//Sprite Renderer
+			//SpriteRenderer sr;
+			//sr.sortingLayerName;
+//			int layermask = LayerMask.NameToLayer(da.name);
+//			if (obj.IsInLayerMask(1 << layermask))
+//			{
+//				return true;
+//			}
 			break;
 		}
 

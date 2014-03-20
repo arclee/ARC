@@ -53,12 +53,19 @@ public class arcFindObjectWin : EditorWindow
 
 	void OnGUI ()
 	{
-		GUILayout.Label ("Find Object With Component", EditorStyles.boldLabel);
+		GUILayout.Label ("Find Object With ...", EditorStyles.boldLabel);
 		
 		GUILayout.BeginHorizontal();
-		if (GUILayout.Button("Add component name", GUILayout.Width(200)))
+		if (GUILayout.Button("Add Condition", GUILayout.Width(200)))
 		{
 			AddFindData("");
+		}
+		if (GUILayout.Button("Clear", GUILayout.Width(200)))
+		{
+			mFindDataList.Clear();			
+			mFindObjsH.Clear();
+			mFindObjsA.Clear();
+
 		}
 		GUILayout.EndHorizontal();
 
@@ -170,14 +177,14 @@ public class arcFindObjectWin : EditorWindow
 		}
 		case 3 :
 		{
-			//Sprite Renderer
-			//SpriteRenderer sr;
-			//sr.sortingLayerName;
-//			int layermask = LayerMask.NameToLayer(da.name);
-//			if (obj.IsInLayerMask(1 << layermask))
-//			{
-//				return true;
-//			}
+			Renderer rd = obj.GetComponent(typeof(Renderer)) as Renderer;
+			if (rd != null)
+			{
+				if (rd.sortingLayerName == da.name)
+				{
+					return true;
+				}
+			}
 			break;
 		}
 

@@ -15,6 +15,7 @@ public class arcErrCollectorWin : EditorWindow
 	{
 		// Get existing open window or if none, make a new one:
 		arcErrCollectorWin window = (arcErrCollectorWin)EditorWindow.GetWindow (typeof (arcErrCollectorWin));
+		window.Show();
 	}
 
 	void OnGUI (){

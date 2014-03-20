@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-
 public class test : MonoBehaviour {
 
 	// Use this for initialization
@@ -12,6 +11,7 @@ public class test : MonoBehaviour {
 		
 		Vector3 cv3 = arcUtility.Clone(v3);
 		Vector3 cv43 = arcUtility.Clone(cv3);
+
 	}
 	
 	// Update is called once per frame

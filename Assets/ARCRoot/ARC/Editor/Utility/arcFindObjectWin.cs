@@ -10,11 +10,15 @@ public class arcFindObjectWin : EditorWindow
 	int mScrollViewHeight = 300;
 	int mScrollViewItemHeight = 20;
 
+	
 	//find.
+	string [] mFindTypeStrs = { "Component", "Tag", "Layer"};
+
 	class FindData
 	{
+		public int typeidx;
 		public bool enable;
-		public string componentName;
+		public string name;
 		public int guiid;
 	}
 
@@ -29,7 +33,7 @@ public class arcFindObjectWin : EditorWindow
 
 		// Get existing open window or if none, make a new one:
 		arcFindObjectWin window = (arcFindObjectWin)EditorWindow.GetWindow (typeof (arcFindObjectWin));
-
+		window.Show();
 
 	}
 
@@ -37,7 +41,8 @@ public class arcFindObjectWin : EditorWindow
 	{
 		FindData data = new FindData();
 		data.enable = true;
-		data.componentName = name;
+		data.name = name;
+		data.typeidx = 0;
 		mFindDataList.Add(data);
 	}
 
@@ -65,7 +70,10 @@ public class arcFindObjectWin : EditorWindow
 			FindData data = mFindDataList[i];
 			data.guiid = guiidx;
 			data.enable = GUILayout.Toggle(data.enable, "", GUILayout.Width(20));
-			data.componentName = GUILayout.TextArea(data.componentName);
+			data.name = GUILayout.TextArea(data.name);
+
+			data.typeidx = EditorGUILayout.Popup(data.typeidx, mFindTypeStrs, GUILayout.Width(100));
+
 			if (GUILayout.Button("X", GUILayout.Width(20)))
 			{
 				RemoveFindDataAt(data.guiid);
@@ -128,6 +136,45 @@ public class arcFindObjectWin : EditorWindow
 
 	}
 
+	bool CheckFindData(FindData da, GameObject obj)
+	{
+		// { "Component", "Tag", "Layer"};
+
+		switch (da.typeidx)
+		{
+		case 0 :
+		{
+			Component cp = obj.GetComponent(da.name);
+			if (cp != null)
+			{
+				return true;
+			}
+			break;
+		}
+		case 1 :
+		{
+			if (obj.tag == da.name)
+			{
+				return true;
+			}
+			break;
+		}
+		case 2 :
+		{
+			int layermask = LayerMask.NameToLayer(da.name);
+			if (obj.IsInLayerMask(1 << layermask))
+			{
+				return true;
+			}
+			break;
+		}
+
+		}
+
+		return false;
+
+	}
+
 	void DoFindObjWithComponent()
 	{
 		mFindObjsH.Clear();
@@ -141,13 +188,13 @@ public class arcFindObjectWin : EditorWindow
 			foreach(FindData da in mFindDataList)
 			{
 				if (da.enable 
-				    && (da.componentName != null)
-				    && (da.componentName.Length > 0)
+				    && (da.name != null)
+				    && (da.name.Length > 0)
 				    )
 				{
 					conds++;
-					Component cp = obj.GetComponent(da.componentName);
-					if (cp != null)
+					
+					if (CheckFindData(da, obj))
 					{
 						oks++;
 					}
@@ -182,13 +229,12 @@ public class arcFindObjectWin : EditorWindow
 				foreach(FindData da in mFindDataList)
 				{
 					if (da.enable 
-					    && (da.componentName != null)
-					    && (da.componentName.Length > 0)
+					    && (da.name != null)
+					    && (da.name.Length > 0)
 					    )
 					{
 						conds++;
-						Component cp = obj.GetComponent(da.componentName);
-						if (cp != null)
+						if (CheckFindData(da, obj))
 						{
 							oks++;
 						}

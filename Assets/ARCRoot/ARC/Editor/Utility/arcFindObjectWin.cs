@@ -5,11 +5,15 @@ using System.Collections.Generic;
 
 public class arcFindObjectWin : EditorWindow
 {
+	//progres bar.
+	arcCancelableProgressBar mPorgBar = new arcCancelableProgressBar("Finding", "Click \"Cancel\" to stop");
+
 	//scroll.
-	Vector2 mScrollpos = new Vector2(0, 0);
+	Vector2 mScrollpos1 = new Vector2(0, 0);
+	Vector2 mScrollpos2 = new Vector2(0, 0);
 	int mScrollViewHeight = 300;
 	int mScrollViewItemHeight = 20;
-
+	int m_ViewCount = 15;
 	
 	//find.
 	string [] mFindTypeStrs = { "Component", "Tag", "Layer", "SortingLayer"};
@@ -77,7 +81,7 @@ public class arcFindObjectWin : EditorWindow
 			FindData data = mFindDataList[i];
 			data.guiid = guiidx;
 			data.enable = GUILayout.Toggle(data.enable, "", GUILayout.Width(20));
-			data.name = GUILayout.TextArea(data.name);
+			data.name = EditorGUILayout.TextField(data.name);
 
 			data.typeidx = EditorGUILayout.Popup(data.typeidx, mFindTypeStrs, GUILayout.Width(100));
 
@@ -101,20 +105,42 @@ public class arcFindObjectWin : EditorWindow
 		}
 		//印出.
 		
-		mScrollpos = GUILayout.BeginScrollView(mScrollpos, GUILayout.Width(300), GUILayout.Height(mScrollViewHeight));
-		
-		foreach(GameObject obj in mFindObjsH)
+//		mScrollpos1 = GUILayout.BeginScrollView(mScrollpos1, GUILayout.Width(300), GUILayout.Height(mScrollViewHeight));
+//		Debug.Log (mScrollpos1);
+//		foreach(GameObject obj in mFindObjsH)
+//		{
+//			GUILayout.BeginHorizontal();
+//			if (GUILayout.Button("<", GUILayout.Width(mScrollViewItemHeight), GUILayout.Height(mScrollViewItemHeight)))
+//			{
+//				EditorGUIUtility.PingObject(obj);
+//			}
+//			
+//			EditorGUILayout.TextField(obj.name, GUILayout.Width(250));
+//			GUILayout.EndHorizontal();			
+//		}
+//		GUILayout.EndScrollView();
+
+		mScrollpos1 = GUILayout.BeginScrollView(mScrollpos1, GUILayout.Width(300));
+		int FirstIndex = (int)(mScrollpos1.y / mScrollViewItemHeight);
+		int itemcount = mFindObjsH.Count;
+		FirstIndex = Mathf.Clamp(FirstIndex, 0, Mathf.Max(0, itemcount - m_ViewCount));
+		GUILayout.Space(FirstIndex * mScrollViewItemHeight);
+		for(int i = FirstIndex; i < Mathf.Min(itemcount, FirstIndex + m_ViewCount); i++)
 		{
+			GameObject obj = mFindObjsH[i];
 			GUILayout.BeginHorizontal();
+			
 			if (GUILayout.Button("<", GUILayout.Width(mScrollViewItemHeight), GUILayout.Height(mScrollViewItemHeight)))
 			{
 				EditorGUIUtility.PingObject(obj);
-			}
-			
-			GUILayout.TextField(obj.name, GUILayout.Width(250));
-			GUILayout.EndHorizontal();			
-		}
+			}			
+			EditorGUILayout.TextField(obj.name, GUILayout.Width(250));
+			GUILayout.EndHorizontal();
+		}		
+		GUILayout.Space(Mathf.Max(0,(itemcount - FirstIndex - m_ViewCount) * mScrollViewItemHeight));
 		GUILayout.EndScrollView();
+
+
 		GUILayout.EndVertical();
 		//右.
 		GUILayout.BeginVertical();
@@ -122,29 +148,44 @@ public class arcFindObjectWin : EditorWindow
 		{
 			DoFindObjInAsset();
 		}
-		//印出.		
-		mScrollpos = GUILayout.BeginScrollView(mScrollpos, GUILayout.Width(300), GUILayout.Height(mScrollViewHeight));
-		
-		foreach(GameObject obj in mFindObjsA)
+		//印出.
+//		mScrollpos2 = GUILayout.BeginScrollView(mScrollpos2, GUILayout.Width(300), GUILayout.Height(mScrollViewHeight));		
+//		foreach(GameObject obj in mFindObjsA)		
+		mScrollpos2 = GUILayout.BeginScrollView(mScrollpos2, GUILayout.Width(300));
+		FirstIndex = (int)(mScrollpos2.y / mScrollViewItemHeight);
+		itemcount = mFindObjsH.Count;
+		FirstIndex = Mathf.Clamp(FirstIndex, 0, Mathf.Max(0, itemcount - m_ViewCount));
+		GUILayout.Space(FirstIndex * mScrollViewItemHeight);
+		for(int i = FirstIndex; i < Mathf.Min(mFindObjsA.Count, FirstIndex + m_ViewCount); i++)
 		{
+			GameObject obj = mFindObjsA[i];
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button("<", GUILayout.Width(mScrollViewItemHeight), GUILayout.Height(mScrollViewItemHeight)))
 			{
-				EditorGUIUtility.PingObject(obj);
-				EditorGUIUtility.PingObject(obj.transform.root.gameObject);
+				Transform ts = obj.transform.root.transform.Find(obj.name);
 
+				//找後到就接PING.因為 Asset 視窗只看得到一層 child 而已.
+				if (ts != null && ts.gameObject == obj)
+				{
+					EditorGUIUtility.PingObject(obj);
+				}
+				else
+				{
+					//在很裡面就 Ping root.
+					EditorGUIUtility.PingObject(obj.transform.root.gameObject);
+				}
 			}
 			
-			GUILayout.TextField(obj.name, GUILayout.Width(250));
+			EditorGUILayout.TextField(obj.name, GUILayout.Width(250));
 			GUILayout.EndHorizontal();			
 		}
+		GUILayout.Space(Mathf.Max(0,(itemcount - FirstIndex - m_ViewCount) * mScrollViewItemHeight));
 		GUILayout.EndScrollView();
-		//GUILayout.EndHorizontal();
 		GUILayout.EndVertical();
 		GUILayout.EndHorizontal();
 
 	}
-	
+
 
 	bool CheckFindData(FindData da, GameObject obj)
 	{
@@ -243,27 +284,46 @@ public class arcFindObjectWin : EditorWindow
 		mFindObjsH.Clear();
 		//所有物件.
 		GameObject[] finds = FindObjectsOfType(typeof(GameObject)) as GameObject[];
+		int totalcount = finds.Length;
+		int porced = 0;
+		mPorgBar.Show();
 		foreach(GameObject obj in finds)
 		{
 			CheckFindDatas(obj, mFindObjsH);
+			porced++;
+			if (mPorgBar.Update(porced, totalcount))
+			{
+				break;
+			}
 		}
+
+		mPorgBar.Close();
 	}
 
 	void DoFindObjInAsset()
 	{
 		mFindObjsA.Clear();
 		string[] phs = AssetDatabase.GetAllAssetPaths();
+		int totalcount = phs.Length;
+		int porced = 0;
+		mPorgBar.Show();
 		foreach(string ph in phs)
 		{
+			porced++;
 			GameObject obj = AssetDatabase.LoadAssetAtPath(ph, (typeof(GameObject))) as GameObject;
 			if (obj != null)
 			{
 				//所有GameObj.
 				CheckFindDatasRecursive(obj, mFindObjsA);
-
+			}
+			if (mPorgBar.Update(porced, totalcount))
+			{
+				break;
 			}
 			obj = null;
 		}
-
+		
+		mPorgBar.Close();
 	}
+
 }

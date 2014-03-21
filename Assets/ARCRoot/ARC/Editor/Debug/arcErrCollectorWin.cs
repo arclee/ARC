@@ -50,7 +50,7 @@ public class arcErrCollectorWin : EditorWindow
 				{
 					//string asp = Application.dataPath;
 					//string uuu = asp.Replace('/', '\\');
-					int idx = ed.filepathname.LastIndexOf("\\Assets\\");
+					int idx = ed.filepathname.LastIndexOf(@"\Assets\");
 					//string bb = ed.filepathname.Replace(uuu, "");
 					string ass = ed.filepathname.Substring(idx + 1);
 					//int ed.filepathname

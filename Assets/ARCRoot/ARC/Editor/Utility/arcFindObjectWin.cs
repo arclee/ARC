@@ -97,7 +97,7 @@ public class arcFindObjectWin : EditorWindow
 		GUILayout.BeginVertical();
 		if (GUILayout.Button("FindHierachy", GUILayout.Width(300)))
 		{
-			DoFindObjWithComponent();
+			DoFindObjInHierarchy();
 		}
 		//印出.
 		
@@ -120,7 +120,7 @@ public class arcFindObjectWin : EditorWindow
 		GUILayout.BeginVertical();
 		if (GUILayout.Button("FindAsset", GUILayout.Width(300)))
 		{
-			DoFindAssetWithComponent();
+			DoFindObjInAsset();
 		}
 		//印出.		
 		mScrollpos = GUILayout.BeginScrollView(mScrollpos, GUILayout.Width(300), GUILayout.Height(mScrollViewHeight));
@@ -131,6 +131,8 @@ public class arcFindObjectWin : EditorWindow
 			if (GUILayout.Button("<", GUILayout.Width(mScrollViewItemHeight), GUILayout.Height(mScrollViewItemHeight)))
 			{
 				EditorGUIUtility.PingObject(obj);
+				EditorGUIUtility.PingObject(obj.transform.root.gameObject);
+
 			}
 			
 			GUILayout.TextField(obj.name, GUILayout.Width(250));
@@ -142,6 +144,7 @@ public class arcFindObjectWin : EditorWindow
 		GUILayout.EndHorizontal();
 
 	}
+	
 
 	bool CheckFindData(FindData da, GameObject obj)
 	{
@@ -193,46 +196,60 @@ public class arcFindObjectWin : EditorWindow
 		return false;
 
 	}
+	
+	void CheckFindDatasRecursive(GameObject obj, List<GameObject> refList)
+	{
+		CheckFindDatas(obj, refList);
+		foreach (Transform ts in obj.transform)
+		{
+			CheckFindDatasRecursive(ts.gameObject, refList);
+		}
+	}
 
-	void DoFindObjWithComponent()
+	void CheckFindDatas(GameObject obj, List<GameObject> refList)
+	{
+		//所有條件.
+		int oks = 0;
+		int conds = 0;
+		foreach(FindData da in mFindDataList)
+		{
+			if (da.enable 
+			    && (da.name != null)
+			    && (da.name.Length > 0)
+			    )
+			{
+				conds++;
+				
+				if (CheckFindData(da, obj))
+				{
+					oks++;
+				}
+				else
+				{
+					break;
+				}
+			}
+		}
+		
+		if ((conds > 0) && (oks >= conds))
+		{
+			refList.Add(obj);
+		}
+
+	}
+
+	void DoFindObjInHierarchy()
 	{
 		mFindObjsH.Clear();
 		//所有物件.
 		GameObject[] finds = FindObjectsOfType(typeof(GameObject)) as GameObject[];
 		foreach(GameObject obj in finds)
 		{
-			//所有條件.
-			int oks = 0;
-			int conds = 0;
-			foreach(FindData da in mFindDataList)
-			{
-				if (da.enable 
-				    && (da.name != null)
-				    && (da.name.Length > 0)
-				    )
-				{
-					conds++;
-					
-					if (CheckFindData(da, obj))
-					{
-						oks++;
-					}
-					else
-					{
-						break;
-					}
-				}
-			}
-
-			if ((conds > 0) && (oks >= conds))
-			{
-				mFindObjsH.Add(obj);
-			}
-
+			CheckFindDatas(obj, mFindObjsH);
 		}
 	}
 
-	void DoFindAssetWithComponent()
+	void DoFindObjInAsset()
 	{
 		mFindObjsA.Clear();
 		string[] phs = AssetDatabase.GetAllAssetPaths();
@@ -241,33 +258,9 @@ public class arcFindObjectWin : EditorWindow
 			GameObject obj = AssetDatabase.LoadAssetAtPath(ph, (typeof(GameObject))) as GameObject;
 			if (obj != null)
 			{
-				
-				//所有條件.
-				int oks = 0;
-				int conds = 0;
-				foreach(FindData da in mFindDataList)
-				{
-					if (da.enable 
-					    && (da.name != null)
-					    && (da.name.Length > 0)
-					    )
-					{
-						conds++;
-						if (CheckFindData(da, obj))
-						{
-							oks++;
-						}
-						else
-						{
-							break;
-						}
-					}
-				}
-				
-				if ((conds > 0) && (oks >= conds))
-				{
-					mFindObjsA.Add(obj);
-				}
+				//所有GameObj.
+				CheckFindDatasRecursive(obj, mFindObjsA);
+
 			}
 			obj = null;
 		}

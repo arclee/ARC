@@ -189,6 +189,10 @@ public class arcFindObjectWin : EditorWindow
 
 	bool CheckFindData(FindData da, GameObject obj)
 	{
+		if (obj == null)
+		{
+			return;
+		}
 		// { "Component", "Tag", "Layer"};
 
 		switch (da.typeidx)
@@ -240,6 +244,11 @@ public class arcFindObjectWin : EditorWindow
 	
 	void CheckFindDatasRecursive(GameObject obj, List<GameObject> refList)
 	{
+		if (obj == null)
+		{
+			return;
+		}
+
 		CheckFindDatas(obj, refList);
 		foreach (Transform ts in obj.transform)
 		{
@@ -249,6 +258,11 @@ public class arcFindObjectWin : EditorWindow
 
 	void CheckFindDatas(GameObject obj, List<GameObject> refList)
 	{
+		if (obj == null)
+		{
+			return;
+		}
+
 		//所有條件.
 		int oks = 0;
 		int conds = 0;

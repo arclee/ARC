@@ -7,7 +7,7 @@ public class arcErrCollectorWin : EditorWindow
 {
 	Vector2 scrollpos = new Vector2(0, 0);
 
-	int scrollViewHeight = 300;
+	//int scrollViewHeight = 300;
 	int scrollViewItemHeight = 20;
 	int m_ViewCount = 15;
 

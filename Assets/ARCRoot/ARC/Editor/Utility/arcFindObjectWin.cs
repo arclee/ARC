@@ -11,7 +11,7 @@ public class arcFindObjectWin : EditorWindow
 	//scroll.
 	Vector2 mScrollpos1 = new Vector2(0, 0);
 	Vector2 mScrollpos2 = new Vector2(0, 0);
-	int mScrollViewHeight = 300;
+//	int mScrollViewHeight = 300;
 	int mScrollViewItemHeight = 20;
 	int m_ViewCount = 15;
 	
@@ -191,7 +191,7 @@ public class arcFindObjectWin : EditorWindow
 	{
 		if (obj == null)
 		{
-			return;
+			return false;
 		}
 		// { "Component", "Tag", "Layer"};
 

@@ -10,11 +10,13 @@ public class arcCSVReader
 
 	TextAsset mTextAsset = null;
 
-	List<string[]> mData = new List<string[]>();
+	public List<string[]> mData = new List<string[]>();
 
 	public bool LoadFromResource(string filename)
 	{
 		mFileName = filename;
+		mData.Clear();
+		mTextAsset = null;
 		mTextAsset = Resources.Load(mFileName) as TextAsset;
 
 		if (mTextAsset == null)
@@ -22,8 +24,8 @@ public class arcCSVReader
 			return false;
 		}
 
-		//mData = SplitCsvGrid(mTextAsset.text);
 		Parse();
+		mTextAsset = null;
 		return true;
 
 	}
@@ -34,9 +36,6 @@ public class arcCSVReader
 		string [] lineArray = mTextAsset.text.Split(new string[] {"\n", "\r\n"}, System.StringSplitOptions.RemoveEmptyEntries);
 
 		//存放.
-
-
-
 		for(int i =0;i < lineArray.Length; i++)
 		{
 			//略過.

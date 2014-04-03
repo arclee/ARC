@@ -27,7 +27,10 @@ public class test : MonoBehaviour {
 		{
 			cr.LoadFromResource("story");
 
-			cr.DebugOutput();
+			//cr.DebugOutput();
+
+			//TextMesh tm = GetComponent<TextMesh>();
+			//tm.text = cr.mData[0][1];
 		}
 
 	}

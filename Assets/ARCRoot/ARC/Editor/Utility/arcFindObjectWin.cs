@@ -128,6 +128,10 @@ public class arcFindObjectWin : EditorWindow
 		for(int i = FirstIndex; i < Mathf.Min(itemcount, FirstIndex + m_ViewCount); i++)
 		{
 			GameObject obj = mFindObjsH[i];
+			if (obj == null)
+			{
+				continue;
+			}
 			GUILayout.BeginHorizontal();
 			
 			if (GUILayout.Button("<", GUILayout.Width(mScrollViewItemHeight), GUILayout.Height(mScrollViewItemHeight)))
@@ -159,6 +163,11 @@ public class arcFindObjectWin : EditorWindow
 		for(int i = FirstIndex; i < Mathf.Min(mFindObjsA.Count, FirstIndex + m_ViewCount); i++)
 		{
 			GameObject obj = mFindObjsA[i];
+			if (obj == null)
+			{
+				continue;
+			}
+
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button("<", GUILayout.Width(mScrollViewItemHeight), GUILayout.Height(mScrollViewItemHeight)))
 			{
@@ -175,7 +184,9 @@ public class arcFindObjectWin : EditorWindow
 					EditorGUIUtility.PingObject(obj.transform.root.gameObject);
 				}
 			}
-			
+
+
+
 			EditorGUILayout.TextField(obj.name, GUILayout.Width(250));
 			GUILayout.EndHorizontal();			
 		}

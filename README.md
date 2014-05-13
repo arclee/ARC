@@ -6,6 +6,8 @@ unity tool lib, unity3D 的小工具包
 元件尋找工具
 ------------
 
+一個視窗, 輸入條件, 找尋物件.
+
 1. Window -> ARC -> Find
 2. Add Condition : 加入一個要尋找條件, 如腳本名稱.
  * 輸入名稱

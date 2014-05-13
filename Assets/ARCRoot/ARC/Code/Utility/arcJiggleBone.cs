@@ -13,7 +13,7 @@
 
 using UnityEngine;
 using System.Collections;
-using UnityEditor;
+
 
 public class arcJiggleBone : MonoBehaviour {
 	public bool debugMode = true;
@@ -143,14 +143,6 @@ public class arcJiggleBone : MonoBehaviour {
 		JiggleBoneUpdate();
 	}
 	
-	void OnDrawGizmos()
-	{
-		//Vector3 ivp = Handles.PositionHandle(dynamicPos, FakeTrans.rotation);
-		Handles.PositionHandle(transform.position, transform.rotation);
-		Handles.PositionHandle(dynamicPos, transform.rotation);
-		
-		//Gizmos.color = Color.yellow;
-		//Gizmos.DrawSphere(transform.position, 1);
-	}
+
 	
 }

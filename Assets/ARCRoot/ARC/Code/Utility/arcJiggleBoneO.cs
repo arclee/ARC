@@ -13,13 +13,11 @@
 
 using UnityEngine;
 using System.Collections;
-using UnityEditor;
 
 public class arcJiggleBoneO : MonoBehaviour {
 	public bool debugMode = true;
 	
 	// Target and dynamic positions
-	Vector3 targetPos = new Vector3();
 	Vector3 dynamicPos = new Vector3();
 	
 	// Bone settings
@@ -47,8 +45,7 @@ public class arcJiggleBoneO : MonoBehaviour {
 	
 	void Awake(){
 		// Set targetPos and dynamicPos at startup
-		Vector3 targetPos = transform.position + transform.TransformDirection(new Vector3((boneAxis.x * targetDistance),(boneAxis.y * targetDistance),(boneAxis.z * targetDistance)));
-		dynamicPos = targetPos;
+		dynamicPos = transform.position + transform.TransformDirection(new Vector3((boneAxis.x * targetDistance),(boneAxis.y * targetDistance),(boneAxis.z * targetDistance)));;
 	}
 	void LateUpdate(){
 		// Reset the bone rotation so we can recalculate the upVector and forwardVector
@@ -138,12 +135,5 @@ public class arcJiggleBoneO : MonoBehaviour {
 		// ==================================================
 	}
 
-	void OnDrawGizmos()
-	{
-		Handles.PositionHandle(targetPos, transform.rotation);
-
-		//Gizmos.color = Color.yellow;
-		//Gizmos.DrawSphere(transform.position, 1);
-	}
 
 }

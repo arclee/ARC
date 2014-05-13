@@ -1,7 +1,7 @@
 ARC
 ===
 
-unity tool lib, unity3D 的小工具包
+# unity3D 的小工具包
 
 可只抓 ARC.unitypackage , 解開後東西全放在 Assets/ARCRoot/ 裡
 

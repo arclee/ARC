@@ -2,7 +2,7 @@
 using System.Collections;
 
 [ExecuteInEditMode]
-public class autoresizecamera : MonoBehaviour {
+public class arcAutoResizeCamera : MonoBehaviour {
 
 	public float width = 16.0f;
 	public float height = 9.0f;

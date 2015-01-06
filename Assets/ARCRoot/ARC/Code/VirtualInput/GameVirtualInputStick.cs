@@ -53,7 +53,7 @@ public class GameVirtualInputStick : GameVirtualInputBase
 		
 		stickHead.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, circleC2d.gameObject.transform.position.z);
 
-		touchID = -1;		
+		//touchID = -1;		
 		holdTime = 0;
 	}
 

@@ -17,7 +17,7 @@ public class GameVirtualInputButton : GameVirtualInputBase
 	//Objects.
 	public Camera tartegCamera;
 	public CircleCollider2D circleC2d;
-	
+	public SpriteRenderer btnSprite;
 	//GUISettings.
 	public float minLongUpTime = 0.1f;
 	public float colliderTouchScale = 3.0f;
@@ -41,7 +41,7 @@ public class GameVirtualInputButton : GameVirtualInputBase
 		circleC2d.radius = oldCircleR;
 		circleC2d.gameObject.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, circleC2d.gameObject.transform.position.z);
 
-		touchID = -1;		
+		//touchID = -1;		
 		holdTime = 0;
 	}
 	
@@ -92,6 +92,7 @@ public class GameVirtualInputButton : GameVirtualInputBase
 				{
 					circleC2d.radius = oldCircleR * colliderTouchScale;
 					holdTime = 0;
+					btnSprite.color = Color.red;
 					if (onDownEvent != null)
 					{
 						onDownEvent(Vector2.zero);
@@ -105,29 +106,30 @@ public class GameVirtualInputButton : GameVirtualInputBase
 				}
 				
 				//移動.
-				/*
+
 				if (t.phase == TouchPhase.Moved)
 				{
 					//direction.
-					Vector3 directionWorld = touchWorldPos - stickPosZ0;
+					//Vector3 directionWorld = touchWorldPos - stickPosZ0;
 					//算出移動多少比率, 半徑.
-					Vector2 directionV2 = new Vector2(directionWorld.x, directionWorld.y);
-					float directionWorldLeng = directionV2.magnitude;
-					float cirRadius = oldCircleR * transform.localScale.x;
-					float directionWorldRadiusRatio = directionWorldLeng/cirRadius;
+					//Vector2 directionV2 = new Vector2(directionWorld.x, directionWorld.y);
+					//float directionWorldLeng = directionV2.magnitude;
+					//float cirRadius = oldCircleR * transform.localScale.x;
+					//float directionWorldRadiusRatio = directionWorldLeng/cirRadius;
 					
-					debugtext.text = directionWorldRadiusRatio.ToString();
+					//debugtext.text = directionWorldRadiusRatio.ToString();
 
 					
 					//collider 跟著移動.
 					circleC2d.gameObject.transform.position = new Vector3(touchWorldPos.x, touchWorldPos.y, circleC2d.gameObject.transform.position.z);
 										
-				}*/
+				}
 				
 				
 				//放開.
 				if (t.phase == TouchPhase.Ended || (t.phase == TouchPhase.Canceled))
 				{
+					btnSprite.color = Color.white;
 					if (onUpEvent != null)
 					{
 						onUpEvent(new Vector2(holdTime, holdTime));

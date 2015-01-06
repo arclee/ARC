@@ -11,7 +11,6 @@ public class GameVirtualInputButton : GameVirtualInputBase
 	public event Action<Vector2> onShortUpEvent;
 	public event Action<Vector2> onLongUpEvent;
 	public event Action<Vector2> onUpEvent;
-	public event Action<Vector2> onMoveEvent;
 	public event Action<Vector2> onHoldEvent;
 	
 	
@@ -129,29 +128,31 @@ public class GameVirtualInputButton : GameVirtualInputBase
 				//放開.
 				if (t.phase == TouchPhase.Ended || (t.phase == TouchPhase.Canceled))
 				{
-					//collider 移回去原位.
-					SetUnTouched();
 					if (onUpEvent != null)
 					{
-						onUpEvent(Vector2.zero);
+						onUpEvent(new Vector2(holdTime, holdTime));
 					}
 					
 					//長放或短放.
 					if (holdTime >= minLongUpTime)
-					{			
+					{
+						Debug.Log("onLongUpEvent" + holdTime.ToString());
 						if (onLongUpEvent != null)
 						{
-							onLongUpEvent(Vector2.zero);
+							onLongUpEvent(new Vector2(holdTime, holdTime));
 						}
 					}
 					else
 					{	
+						Debug.Log("onShortUpEvent" + holdTime.ToString());
 						if (onShortUpEvent != null)
 						{
-							onShortUpEvent(Vector2.zero);
+							onShortUpEvent(new Vector2(holdTime, holdTime));
 						}	
 					}
 					
+					//collider 移回去原位.
+					SetUnTouched();
 				}
 				
 				

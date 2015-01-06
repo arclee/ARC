@@ -157,7 +157,7 @@ public class GameVirtualInputStick : GameVirtualInputBase
 					{
 						if (onMoveEvent != null)
 						{
-							onMoveEvent(directionV2);
+							onMoveEvent(directionV2.normalized);
 						}		
 					}
 

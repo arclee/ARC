@@ -37,7 +37,8 @@ public class GameVirtualInput : MonoBehaviour
 		DOWN = 0,
 		SHORT_UP,
 		LONG_UP,
-		UP
+		UP,
+		HOLD
 	};
 	//public Dictionary<int, GameVirtualInputBase> touchedDict = new Dictionary<int, GameVirtualInputBase>();
 
@@ -149,7 +150,7 @@ public class GameVirtualInput : MonoBehaviour
 		}
 	}
 	
-	public void UnRegStickInputEventt(int InputId, StickInputEventType et, Action<Vector2> se)
+	public void UnRegStickInputEvent(int InputId, StickInputEventType et, Action<Vector2> se)
 	{
 		int fid = -1;
 		for (int i = 0; i < inputList.Count; i++)
@@ -236,6 +237,12 @@ public class GameVirtualInput : MonoBehaviour
 						gvis.onLongUpEvent += se;
 						break;
 					}
+					case ButtonInputEventType.HOLD:
+					{
+						gvis.onHoldEvent -= se;
+						gvis.onHoldEvent += se;
+						break;
+					}
 					default:
 					{
 						Debug.Log("RegButtonInputEvent no set Case:" + et.ToString());
@@ -280,6 +287,11 @@ public class GameVirtualInput : MonoBehaviour
 					case ButtonInputEventType.LONG_UP:
 					{
 						gvis.onLongUpEvent -= se;
+						break;
+					}
+					case ButtonInputEventType.HOLD:
+					{
+						gvis.onHoldEvent -= se;
 						break;
 					}
 					default:

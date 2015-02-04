@@ -16,6 +16,21 @@ public class playerctrl : MonoBehaviour {
 
 	public float shiftforce = 10;
 
+	//network.
+	private float lastSynchronizationTime = 0f;
+	private float syncDelay = 0f;
+	private float syncTime = 0f;
+	
+	private Vector3 syncStartPosition = Vector3.zero;
+	private Vector3 syncEndPosition = Vector3.zero;
+	private Quaternion syncStartRot = Quaternion.identity;
+
+	void Awake()
+	{
+		lastSynchronizationTime = Time.time;
+	}
+
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -24,31 +39,70 @@ public class playerctrl : MonoBehaviour {
 	
 	void OnEnable ()
 	{
-		GameVirtualInput.instance.RegStickInputEvent(0, GameVirtualInput.StickInputEventType.MOVE, VIMove);
-		GameVirtualInput.instance.RegStickInputEvent(0, GameVirtualInput.StickInputEventType.UP, VIMoveStop);
+		if (networkView.isMine)
+		{
+			GameVirtualInput.instance.RegStickInputEvent(0, GameVirtualInput.StickInputEventType.MOVE, VIMove);
+			GameVirtualInput.instance.RegStickInputEvent(0, GameVirtualInput.StickInputEventType.UP, VIMoveStop);
 
-		GameVirtualInput.instance.RegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.SHORT_UP, VIShoot);
-		GameVirtualInput.instance.RegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.HOLD, VICharge);
-		GameVirtualInput.instance.RegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.UP, VIChargeUP);
-		
-		GameVirtualInput.instance.RegButtonInputEvent(1, GameVirtualInput.ButtonInputEventType.DOWN, VIChargeShiftDown);
-		GameVirtualInput.instance.RegButtonInputEvent(2, GameVirtualInput.ButtonInputEventType.UP, VIChargeShiftUp);
+			GameVirtualInput.instance.RegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.SHORT_UP, VIShoot);
+			GameVirtualInput.instance.RegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.HOLD, VICharge);
+			GameVirtualInput.instance.RegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.UP, VIChargeUP);
+			
+			GameVirtualInput.instance.RegButtonInputEvent(1, GameVirtualInput.ButtonInputEventType.DOWN, VIChargeShiftDown);
+			GameVirtualInput.instance.RegButtonInputEvent(2, GameVirtualInput.ButtonInputEventType.UP, VIChargeShiftUp);
+		}
 	}
 
 
 	void OnDisable ()
 	{
-		GameVirtualInput.instance.UnRegStickInputEvent(0, GameVirtualInput.StickInputEventType.MOVE, VIMove);
-		GameVirtualInput.instance.UnRegStickInputEvent(0, GameVirtualInput.StickInputEventType.UP, VIMoveStop);
-		
-		GameVirtualInput.instance.UnRegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.SHORT_UP, VIShoot);
-		GameVirtualInput.instance.UnRegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.HOLD, VICharge);
-		GameVirtualInput.instance.UnRegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.UP, VIChargeUP);
-		
-		GameVirtualInput.instance.UnRegButtonInputEvent(1, GameVirtualInput.ButtonInputEventType.DOWN, VIChargeShiftDown);
-		GameVirtualInput.instance.UnRegButtonInputEvent(2, GameVirtualInput.ButtonInputEventType.UP, VIChargeShiftUp);
+		if (networkView.isMine)
+		{
+			GameVirtualInput.instance.UnRegStickInputEvent(0, GameVirtualInput.StickInputEventType.MOVE, VIMove);
+			GameVirtualInput.instance.UnRegStickInputEvent(0, GameVirtualInput.StickInputEventType.UP, VIMoveStop);
+			
+			GameVirtualInput.instance.UnRegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.SHORT_UP, VIShoot);
+			GameVirtualInput.instance.UnRegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.HOLD, VICharge);
+			GameVirtualInput.instance.UnRegButtonInputEvent(0, GameVirtualInput.ButtonInputEventType.UP, VIChargeUP);
+			
+			GameVirtualInput.instance.UnRegButtonInputEvent(1, GameVirtualInput.ButtonInputEventType.DOWN, VIChargeShiftDown);
+			GameVirtualInput.instance.UnRegButtonInputEvent(2, GameVirtualInput.ButtonInputEventType.UP, VIChargeShiftUp);
+		}
 	}
+	
+	void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
+	{
+		Vector3 syncPosition = Vector3.zero;
+		Vector3 syncVelocity = Vector3.zero;
+		Quaternion syncRot = Quaternion.identity;
 
+		if (stream.isWriting)
+		{
+			syncPosition = rigidbody.position;
+			stream.Serialize(ref syncPosition);
+			
+			syncPosition = rigidbody.velocity;
+			stream.Serialize(ref syncVelocity);
+
+			syncRot = rigidbody.rotation;
+			stream.Serialize(ref syncRot);
+		}
+		else
+		{
+			stream.Serialize(ref syncPosition);
+			stream.Serialize(ref syncVelocity);
+			stream.Serialize(ref syncRot);
+			
+			syncTime = 0f;
+			syncDelay = Time.time - lastSynchronizationTime;
+			lastSynchronizationTime = Time.time;
+			
+			syncEndPosition = syncPosition + syncVelocity * syncDelay;
+			syncStartPosition = rigidbody.position;
+
+			syncStartRot = syncRot;
+		}
+	}
 
 	void VIMove(Vector2 move)
 	{
@@ -109,15 +163,78 @@ public class playerctrl : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
+		if (networkView.isMine)
+		{
+#if UNITY_STANDALONE
+			InputMovement();
+#endif
+			UpdatePos();
+		}
+		else
+		{
+			SyncedMovement();
+		}
+	}
+
+	void UpdatePos()
+	{
 		//if (movedir.magnitude > 0)
 		{
-			transform.Translate(movedir, Space.World);
-		}	
-	}
+			//transform.Translate(movedir, Space.World);
+			rigidbody.MovePosition(rigidbody.position + movedir);
+		}
 
-	void OnGUI()
-	{
+	}
 	
-	}
+	private void InputMovement()
+	{
+		if (Input.GetKeyUp(KeyCode.W))
+		{
+			movedir.y = 0;
+		}
+		if (Input.GetKeyUp(KeyCode.S))
+		{
+			movedir.y = 0;
+		}
+		if (Input.GetKeyUp(KeyCode.D))
+		{
+			movedir.x = 0;
+		}
+		if (Input.GetKeyUp(KeyCode.A))
+		{
+			movedir.x = 0;
+		}
 
+
+		if (Input.GetKey(KeyCode.W))
+		{
+			movedir.y = 1;
+		}
+		
+		if (Input.GetKey(KeyCode.S))
+		{
+			movedir.y = -1;
+		}
+
+		if (Input.GetKey(KeyCode.D))
+		{
+			movedir.x = 1;
+		}
+		
+		if (Input.GetKey(KeyCode.A))
+		{
+			movedir.x = -1;
+		}
+		
+		VIMove(movedir);
+
+	}
+	private void SyncedMovement()
+	{
+		syncTime += Time.deltaTime;
+		
+		rigidbody.position = Vector3.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
+
+		rigidbody.rotation = syncStartRot;
+	}
 }

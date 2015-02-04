@@ -33,7 +33,9 @@ public class GameVirtualInputStick : GameVirtualInputBase
 	public float colliderTouchScale = 3.0f;
 
 	float oldCircleR;
-
+	
+	public bool isUseStickAppearArea = true;
+	public BoxCollider2D AppearArea;
 	//info.
 	public float holdTime = 0;
 
@@ -53,9 +55,10 @@ public class GameVirtualInputStick : GameVirtualInputBase
 		
 		stickHead.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, circleC2d.gameObject.transform.position.z);
 
-		//touchID = -1;		
+		touchID = -1;		
 		holdTime = 0;
 	}
+
 
 	override public int InputUpdate()
 	{
@@ -77,6 +80,16 @@ public class GameVirtualInputStick : GameVirtualInputBase
 				//touch delta pos.
 				Vector3 touchdeltaWorldPos = tartegCamera.ScreenToWorldPoint(new Vector3 (t.deltaPosition.x, t.deltaPosition.y, 0));
 				touchdeltaWorldPos.z = 0;
+
+				//可出現stick的範圍.
+				if (isUseStickAppearArea && AppearArea != null)
+				{
+					if (AppearArea.OverlapPoint(touchWorldPos) && (t.phase == TouchPhase.Began))
+					{
+						transform.position = new Vector3(touchWorldPos.x, touchWorldPos.y, transform.position.z);
+					}
+				}
+
 
 				//是否點中.
 				if (circleC2d.OverlapPoint(touchWorldPos))
@@ -108,6 +121,7 @@ public class GameVirtualInputStick : GameVirtualInputBase
 					{
 						onDownEvent(Vector2.zero);
 					}
+
 				}
 
 				//按住.
@@ -127,7 +141,6 @@ public class GameVirtualInputStick : GameVirtualInputBase
 					float cirRadius = oldCircleR * transform.localScale.x;
 					float directionWorldRadiusRatio = directionWorldLeng/cirRadius;
 
-					//debugtext.text = directionWorldRadiusRatio.ToString();
 
 
 					if (moveStick)

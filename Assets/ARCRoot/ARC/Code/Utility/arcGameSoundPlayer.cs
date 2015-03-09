@@ -16,7 +16,7 @@ public class arcGameSoundPlayer : MonoBehaviour {
 	public AudioSource BGMSource2;
 	BGMSourceID CurrentBGMSourceID = BGMSourceID.BGMN;
 
-	//所有的 bgm.
+	//所有的 bgm, 手動拉進來.
 	public AudioClip[] BGMS;
 	//淡入淡出時間.
 	public float fadeInTime = 1.0f;

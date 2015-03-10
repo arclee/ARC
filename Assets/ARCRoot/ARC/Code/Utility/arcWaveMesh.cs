@@ -56,7 +56,7 @@ public class arcWaveMesh : MonoBehaviour {
 		}
 
 		//效能.
-		if (!renderer.isVisible)
+		if (!GetComponent<Renderer>().isVisible)
 		{
 			return;
 		}

@@ -15,6 +15,8 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 		public float DeltaTime;
 		public float TotalTime;
 
+		//多人操作暫停時, 以最後一個人解除為主.
+		public int PauseCount;
 		public TimeData(string name)
 		{
 			Name = name;
@@ -26,8 +28,25 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 			Enable = true;
 			DeltaTime = 0;
 			TotalTime = 0;
+			PauseCount = 0;
 		}
 
+		public void PauseWithCount()
+		{
+			DeltaTime = 0;
+			PauseCount++;
+		}
+
+		public void PlayWithCount()
+		{
+			PauseCount--;
+			PauseCount = Math.Max(PauseCount, 0);
+		}
+
+		public bool isPlaying()
+		{
+			return PauseCount == 0;
+		}
 	}
 	
 	static TextAsset mTextAsset = null;
@@ -68,10 +87,14 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 	{
 		foreach(KeyValuePair<string, TimeData>  kp in TimeList)
 		{
-			if (kp.Value.Enable)
+			if (kp.Value.Enable && kp.Value.isPlaying())
 			{
 				kp.Value.DeltaTime = Time.deltaTime;
 				kp.Value.TotalTime += Time.deltaTime;
+			}
+			else
+			{
+				kp.Value.DeltaTime = 0;
 			}
 		}
 	}

@@ -24,19 +24,32 @@ public class arcGamePlayTimeMgrWin : EditorWindow
 	
 	static public void Save()
 	{
+		//create dir.
+		string arcdir = Application.dataPath + "/" + arcMenu.ResourceRoot + arcMenu.ResourceDir;
+		if (!System.IO.Directory.Exists(arcdir))
+		{
+			System.IO.Directory.CreateDirectory(arcdir);
+		}
+
 		BinaryFormatter bf = new BinaryFormatter();
 		FileStream file = File.Create(SaveFilePathName);
 		bf.Serialize(file, arcGamePlayTimeMgr.TimeList);
-
+		file.Close();
 		AssetDatabase.SaveAssets();
+		AssetDatabase.Refresh();
 
 	}
 	
 	static public void Load()
 	{
-		
+
 		mTextAsset = Resources.Load(arcGamePlayTimeMgr.SaveFileName) as TextAsset;
-		
+		if (mTextAsset == null)
+		{
+			Debug.Log("Time data not found: " + arcMenu.ResourceRoot + arcGamePlayTimeMgr.SaveFileName);
+			return;
+		}
+
 		BinaryFormatter bf = new BinaryFormatter();
 		MemoryStream ms = new MemoryStream(mTextAsset.bytes);
 		arcGamePlayTimeMgr.TimeList = bf.Deserialize(ms) as Dictionary<string, arcGamePlayTimeMgr.TimeData>;

@@ -12,6 +12,7 @@ public class arcGameBillBoard : MonoBehaviour {
 
 	public LookMode lookmode = LookMode.LookCam;
 	public bool keepYup = false;
+	public bool invForward = false;
 
 	// Use this for initialization
 	void Start () {
@@ -28,7 +29,15 @@ public class arcGameBillBoard : MonoBehaviour {
 			{
 				cam.y = transform.position.y;
 			}
-			transform.LookAt(transform.position - cam + transform.position);
+
+			if (invForward)
+			{
+				transform.LookAt(transform.position - cam + transform.position);
+			}
+			else
+			{
+				transform.LookAt(cam);
+			}
 		}
 		else if (lookmode == LookMode.LookCamFoward)
 		{
@@ -39,7 +48,14 @@ public class arcGameBillBoard : MonoBehaviour {
 				cam.Normalize();
 			}
 			
-			transform.LookAt(transform.position + cam);
+			if (invForward)
+			{
+				transform.LookAt(transform.position + cam);
+			}
+			else
+			{
+				transform.LookAt(transform.position - cam);
+			}
 		}
 
 	}

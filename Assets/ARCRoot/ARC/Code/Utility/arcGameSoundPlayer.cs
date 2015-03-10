@@ -142,10 +142,7 @@ public class arcGameSoundPlayer : MonoBehaviour {
 	//debug gui.
 	void OnGUI()
 	{
-		Matrix4x4 _matrix = GUI.matrix;
-		_matrix.m00 = (float)Screen.width / GUIScreenSizeX;
-		_matrix.m11 = (float)Screen.height / GUIScreenSizeY;
-		GUI.matrix = _matrix;
+		arcUtility.GUIMatrixAutoScale(GUIScreenSizeX, GUIScreenSizeY);
 
 		if (GUILayout.Button("play bgm"))
 		{

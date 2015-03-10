@@ -5,10 +5,10 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Diagnostics;
-//http://stackoverflow.com/questions/78536/deep-cloning-objects-in-c-sharp
 
 public static class arcUtility
 {
+	//http://stackoverflow.com/questions/78536/deep-cloning-objects-in-c-sharp
 	public static T Clone<T>(T source)
 	{
 		if (!typeof(T).IsSerializable)
@@ -76,5 +76,14 @@ public static class arcUtility
 		q.y *= Mathf.Sign( q.y * ( m[0,2] - m[2,0] ) );
 		q.z *= Mathf.Sign( q.z * ( m[1,0] - m[0,1] ) );
 		return q;
+	}
+
+	//設定 GUI 用多少大小的畫面顯示, 再依目前畫面大小自動縮放.
+	static public void GUIMatrixAutoScale(float fromScreenX, float fromScreenY)
+	{
+		Matrix4x4 _matrix = GUI.matrix;
+		_matrix.m00 = (float)Screen.width / fromScreenX;
+		_matrix.m11 = (float)Screen.height / fromScreenY;
+		GUI.matrix = _matrix;
 	}
 }

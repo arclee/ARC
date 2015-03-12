@@ -6,13 +6,15 @@ public class arcGameBillBoard : MonoBehaviour {
 
 	public enum LookMode
 	{
-		LookCam = 0,
-		LookCamFoward
+		LookCam = 0,//看著 cam.
+		LookCamFoward//看著 cam 看的方向.
 	}
 
 	public LookMode lookmode = LookMode.LookCam;
-	public bool keepYup = false;
-	public bool invForward = false;
+	//保持 y 朝正上.
+	public bool keepYUp = false;
+	//使用 -forward 當面向. 一般 sprite 的圖片正面會是 -forward, 這時就要勾選.
+	public bool useBackwardLookCam = false;
 
 	// Use this for initialization
 	void Start () {
@@ -25,12 +27,12 @@ public class arcGameBillBoard : MonoBehaviour {
 		if (lookmode == LookMode.LookCam)
 		{
 			Vector3 cam = Camera.main.transform.position;
-			if (keepYup)
+			if (keepYUp)
 			{
 				cam.y = transform.position.y;
 			}
 
-			if (invForward)
+			if (useBackwardLookCam)
 			{
 				transform.LookAt(transform.position - cam + transform.position);
 			}
@@ -42,13 +44,13 @@ public class arcGameBillBoard : MonoBehaviour {
 		else if (lookmode == LookMode.LookCamFoward)
 		{
 			Vector3 cam = Camera.main.transform.forward;
-			if (keepYup)
+			if (keepYUp)
 			{
 				cam.y = 0;
 				cam.Normalize();
 			}
 			
-			if (invForward)
+			if (useBackwardLookCam)
 			{
 				transform.LookAt(transform.position + cam);
 			}

@@ -5,6 +5,16 @@ ARC
 
 可只抓 ARC.unitypackage , 解開後東西全放在 Assets/ARCRoot/ 裡
 
+
+目錄結構
+------------
+* ARCRoot (根目錄)
+** ARC (主要程式碼)
+** Code (主要程式碼)
+** Editor (編輯器功能)
+** Demo (範例)
+
+
 元件尋找工具
 ------------
 

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 public class test : MonoBehaviour {
-	
+
+	int foo;
 	arcCSVReader cr = new arcCSVReader();
 	// Use this for initialization
 	void Start () {

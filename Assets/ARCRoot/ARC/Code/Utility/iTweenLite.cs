@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+// Demo 
+// http://hosted.zeh.com.br/mctween/animationtypes.html
+// http://www.robertpenner.com/easing/easing_demo.html
 public class iTweenLite
 {	
 	public enum EaseType{

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class arcGameSoundPlayer : MonoBehaviour {
 
-
+	public static arcGameSoundPlayer instance;
 	public enum BGMSourceID
 	{
 		BGMN = 0,
@@ -15,6 +15,7 @@ public class arcGameSoundPlayer : MonoBehaviour {
 	public AudioSource BGMSource1;
 	public AudioSource BGMSource2;
 	BGMSourceID CurrentBGMSourceID = BGMSourceID.BGMN;
+
 
 	//所有的 bgm, 手動拉進來.
 	public AudioClip[] BGMS;
@@ -34,9 +35,25 @@ public class arcGameSoundPlayer : MonoBehaviour {
 	//目前淡入淡出值.
 	float currentFadeInVal;
 	
+	public AudioClip[] FxClips;
+	public AudioSource[] FXSources;
+
 	//debug gui.
 	public int GUIScreenSizeX = 845;
 	public int GUIScreenSizeY = 480;
+	
+	void Awake ()
+	{
+		if (instance == null)
+		{
+			instance = this;
+			DontDestroyOnLoad(gameObject);
+		}
+		else
+		{
+			Destroy(gameObject);
+		}
+	}
 
 	// Use this for initialization
 	void Start ()
@@ -138,7 +155,7 @@ public class arcGameSoundPlayer : MonoBehaviour {
 			startfade = true;
 		}
 	}
-	
+	/*
 	//debug gui.
 	void OnGUI()
 	{
@@ -153,8 +170,12 @@ public class arcGameSoundPlayer : MonoBehaviour {
 				PlayBGM(playBGMidx);
 			}
 		}
-
-
 	}
+*/
 
+	public void PlayFX(int idx)
+	{
+		//FXSources[0].clip = FxClips[idx];
+		FXSources[0].PlayOneShot(FxClips[idx]);
+	}
 }

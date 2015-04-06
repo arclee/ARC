@@ -24,6 +24,10 @@ public class arcGameBillBoard : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
+		if (Camera.main == null) 
+		{
+			return;
+		}
 		if (lookmode == LookMode.LookCam)
 		{
 			Vector3 cam = Camera.main.transform.position;

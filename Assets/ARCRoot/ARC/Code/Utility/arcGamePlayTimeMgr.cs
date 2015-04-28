@@ -14,9 +14,9 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 		public string Name;
 		public float DeltaTime;
 		public float TotalTime;
-
 		//多人操作暫停時, 以最後一個人解除為主.
-		public int PauseCount;
+		public int pauseCount;
+		public float scale;
 		public TimeData(string name)
 		{
 			Name = name;
@@ -28,24 +28,24 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 			Enable = true;
 			DeltaTime = 0;
 			TotalTime = 0;
-			PauseCount = 0;
+			scale = 1;
 		}
 
 		public void PauseWithCount()
 		{
 			DeltaTime = 0;
-			PauseCount++;
+			pauseCount++;
 		}
 
 		public void PlayWithCount()
 		{
-			PauseCount--;
-			PauseCount = Math.Max(PauseCount, 0);
+			pauseCount--;
+			pauseCount = Math.Max(pauseCount, 0);
 		}
 
 		public bool isPlaying()
 		{
-			return PauseCount == 0;
+			return pauseCount == 0;
 		}
 	}
 	
@@ -89,8 +89,8 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 		{
 			if (kp.Value.Enable && kp.Value.isPlaying())
 			{
-				kp.Value.DeltaTime = Time.deltaTime;
-				kp.Value.TotalTime += Time.deltaTime;
+				kp.Value.DeltaTime = Time.deltaTime * kp.Value.scale;
+				kp.Value.TotalTime += kp.Value.DeltaTime;
 			}
 			else
 			{
@@ -153,6 +153,43 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 
 		return 0;
 	}
-	
+
+	static public void SetEnable(string name, bool enable)
+	{
+		TimeData td = GetTimeData(name);
+		if (td != null)
+		{
+			td.Enable = enable;
+		}
+	}
+
+	static public void SetScale(string name, float scale)
+	{
+		TimeData td = GetTimeData(name);
+
+		if (td != null)
+		{
+			td.scale = scale;
+		}
+	}
+
+	static public void GetBackupEnable(ref Dictionary<string, bool> backuplist)
+	{
+		backuplist.Clear();
+
+		foreach (KeyValuePair<string, TimeData> kp in TimeList)
+		{
+			backuplist.Add(kp.Key, kp.Value.Enable);
+		}
+	}
+
+	static public void SetRestoreEnable(ref Dictionary<string, bool> backuplist)
+	{
+		foreach (KeyValuePair<string, bool> kp in backuplist)
+		{
+			SetEnable(kp.Key, kp.Value);
+		}
+
+	}
 
 }

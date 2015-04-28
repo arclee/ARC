@@ -39,7 +39,7 @@ public class playerctrl : MonoBehaviour {
 	
 	void OnEnable ()
 	{
-		if (networkView.isMine)
+		if (GetComponent<NetworkView>().isMine)
 		{
 			GameVirtualInput.instance.RegStickInputEvent(0, GameVirtualInput.StickInputEventType.MOVE, VIMove);
 			GameVirtualInput.instance.RegStickInputEvent(0, GameVirtualInput.StickInputEventType.UP, VIMoveStop);
@@ -56,7 +56,7 @@ public class playerctrl : MonoBehaviour {
 
 	void OnDisable ()
 	{
-		if (networkView.isMine)
+		if (GetComponent<NetworkView>().isMine)
 		{
 			GameVirtualInput.instance.UnRegStickInputEvent(0, GameVirtualInput.StickInputEventType.MOVE, VIMove);
 			GameVirtualInput.instance.UnRegStickInputEvent(0, GameVirtualInput.StickInputEventType.UP, VIMoveStop);
@@ -78,13 +78,13 @@ public class playerctrl : MonoBehaviour {
 
 		if (stream.isWriting)
 		{
-			syncPosition = rigidbody.position;
+			syncPosition = GetComponent<Rigidbody>().position;
 			stream.Serialize(ref syncPosition);
 			
-			syncPosition = rigidbody.velocity;
+			syncPosition = GetComponent<Rigidbody>().velocity;
 			stream.Serialize(ref syncVelocity);
 
-			syncRot = rigidbody.rotation;
+			syncRot = GetComponent<Rigidbody>().rotation;
 			stream.Serialize(ref syncRot);
 		}
 		else
@@ -98,7 +98,7 @@ public class playerctrl : MonoBehaviour {
 			lastSynchronizationTime = Time.time;
 			
 			syncEndPosition = syncPosition + syncVelocity * syncDelay;
-			syncStartPosition = rigidbody.position;
+			syncStartPosition = GetComponent<Rigidbody>().position;
 
 			syncStartRot = syncRot;
 		}
@@ -153,7 +153,7 @@ public class playerctrl : MonoBehaviour {
 	
 	void VIChargeShiftDown(Vector2 move)
 	{
-		rigidbody.AddForce(transform.forward * shiftforce);
+		GetComponent<Rigidbody>().AddForce(transform.forward * shiftforce);
 	}
 
 	void VIChargeShiftUp(Vector2 move)
@@ -163,7 +163,7 @@ public class playerctrl : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
-		if (networkView.isMine)
+		if (GetComponent<NetworkView>().isMine)
 		{
 #if UNITY_STANDALONE
 			InputMovement();
@@ -181,7 +181,7 @@ public class playerctrl : MonoBehaviour {
 		//if (movedir.magnitude > 0)
 		{
 			//transform.Translate(movedir, Space.World);
-			rigidbody.MovePosition(rigidbody.position + movedir);
+			GetComponent<Rigidbody>().MovePosition(GetComponent<Rigidbody>().position + movedir);
 		}
 
 	}
@@ -233,8 +233,8 @@ public class playerctrl : MonoBehaviour {
 	{
 		syncTime += Time.deltaTime;
 		
-		rigidbody.position = Vector3.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
+		GetComponent<Rigidbody>().position = Vector3.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
 
-		rigidbody.rotation = syncStartRot;
+		GetComponent<Rigidbody>().rotation = syncStartRot;
 	}
 }

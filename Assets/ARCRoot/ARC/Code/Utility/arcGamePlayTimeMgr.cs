@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -28,6 +28,7 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 			Enable = true;
 			DeltaTime = 0;
 			TotalTime = 0;
+			pauseCount = 0;
 			scale = 1;
 		}
 

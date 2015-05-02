@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 
-using UnityEditor;
 // 修改自 http://wiki.unity3d.com/index.php?title=MeshMerger
 
 //==============================================================================

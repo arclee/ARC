@@ -13,6 +13,8 @@ public class arcGamePlayTimeMgrWin : EditorWindow
 	static TextAsset mTextAsset = null;
 	static List<string> RemoveList = new List<string>();
 	static string SaveFilePathName = Application.dataPath + "/" + arcMenu.ResourceRoot + arcMenu.ResourceDir +"timemgr.bytes";
+	
+	static string SaveFilePathNameXML = Application.dataPath + "/" + arcMenu.ResourceRoot + arcMenu.ResourceDir +"timemgrtext";
 
 	[MenuItem (arcMenu.WindowRoot + "Game/TimeManager")]
 	static void Init ()
@@ -65,12 +67,16 @@ public class arcGamePlayTimeMgrWin : EditorWindow
 				
 		if (GUILayout.Button("save"))
 		{
-			Save();
+			//Save();
+			arcGamePlayTimeMgr.Save(SaveFilePathNameXML);
+			AssetDatabase.SaveAssets();
+			AssetDatabase.Refresh();
 		}
 		
 		if (GUILayout.Button("load"))
 		{
-			Load();
+			//Load();
+			arcGamePlayTimeMgr.LoadXML();
 		}
 		GUILayout.EndHorizontal();
 
@@ -92,6 +98,7 @@ public class arcGamePlayTimeMgrWin : EditorWindow
 		{
 			GUILayout.BeginHorizontal();
 			kp.Value.Enable = GUILayout.Toggle(kp.Value.Enable, "Enable");
+			kp.Value.scale = EditorGUILayout.FloatField( "Scale", kp.Value.scale);
 			GUILayout.Label(kp.Value.Name);
 
 			if (GUILayout.Button("X"))

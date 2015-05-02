@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using System;
 using  System.Runtime.Serialization.Formatters.Binary;
 public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
@@ -51,7 +52,9 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 	}
 	
 	static TextAsset mTextAsset = null;
-	static public string SaveFileName = "ARC/timemgr";
+	static public string SaveFileName = "ARC/timemgrtext";
+
+	static int version = 1;
 	public static Dictionary<string, TimeData> TimeList = new Dictionary<string, TimeData>();
 	
 	private arcGamePlayTimeMgr()
@@ -61,14 +64,147 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 
 	static public void Load()
 	{
-		mTextAsset = Resources.Load(SaveFileName) as TextAsset;
-		if (mTextAsset == null)
+		LoadXML();
+	}
+
+	static void LoadBin()
+	{
+		//not work on web.
+//		mTextAsset = Resources.Load(SaveFileName) as TextAsset;
+//		if (mTextAsset == null)
+//		{
+//			return;
+//		}
+//		BinaryFormatter bf = new BinaryFormatter();
+//		MemoryStream ms = new MemoryStream(mTextAsset.bytes);
+//		arcGamePlayTimeMgr.TimeList = bf.Deserialize(ms) as Dictionary<string, arcGamePlayTimeMgr.TimeData>;
+
+	}
+
+	static public void Save(string SaveFilePathName)
+	{
+		arcCrypto.WriteText(SaveFilePathName + ".txt", SaveXMLCB, false, SaveFilePathName + "c.txt");
+	}
+
+	static void SaveXMLCB(StreamWriter writer)
+	{
+
+		XmlWriterSettings settings = new XmlWriterSettings();
+		settings.Indent = true;
+		settings.Encoding = System.Text.Encoding.UTF8;
+		
+		
+		//寫檔.		
+		XmlWriter xmlwriter = XmlWriter.Create(writer, settings);
+		xmlwriter.WriteStartDocument();		
+		xmlwriter.WriteStartElement("arcGamePlayTimeMgr");
+		xmlwriter.WriteAttributeString("version", version.ToString());		
+
+		
+		foreach(KeyValuePair<string, TimeData>  kp in TimeList)
 		{
-			return;
+			xmlwriter.WriteStartElement("Data");
+			xmlwriter.WriteAttributeString("name", kp.Value.Name);
+			xmlwriter.WriteAttributeString("scale", kp.Value.scale.ToString());
+			xmlwriter.WriteEndElement();//Data.
+
+		}	
+
+		
+		
+		xmlwriter.WriteEndElement();//arcGamePlayTimeMgr.		
+		xmlwriter.WriteEndDocument();
+		
+		xmlwriter.Close();
+		xmlwriter = null;
+		
+		writer.Flush();
+		
+		Debug.Log("XML write finish");
+
+	}
+	
+	public static void LoadXML()
+	{
+		arcCrypto.ReadTextFromResouce(SaveFileName, LoadXMLCB, false, SaveFileName + "c");
+
+
+	}
+
+	static void LoadXMLCB(StreamReader reader)
+	{
+		TimeList.Clear();
+		XmlReader xr = XmlReader.Create(reader);		
+		XmlParseTimeMgr(xr);
+		xr.Close();
+		//Debug.Log("XML Read finish");
+	}
+	
+	static void XmlParseTimeMgr(XmlReader xr)
+	{
+		while(xr.Read())
+		{
+			if (xr.IsStartElement())
+			{
+				//Debug.Log(xr.Name + " " + xr.Value);
+				if (xr.NodeType == XmlNodeType.Element)
+				{
+					if (xr.Name == "arcGamePlayTimeMgr")
+					{
+						//Debug.Log("Element:" + xr.NodeType + " name:" + xr.Name);
+						while (xr.MoveToNextAttribute())
+						{
+//							if (xr.Name == "version")
+//							{
+//								Debug.Log(xr.Name + ":" + xr.Value);
+//							}
+						}
+
+					}
+					
+					xr.MoveToElement();		
+
+					XmlReader xrchild = xr.ReadSubtree();
+					xrchild.Read();
+					XmlParseData(xrchild);
+						
+				}
+			}
+		}		
+	}
+	
+	static void XmlParseData(XmlReader xr)
+	{
+		while(xr.Read())
+		{
+			if (xr.IsStartElement())
+			{
+				//Debug.Log(xr.Name + " " + xr.Value);
+				if (xr.NodeType == XmlNodeType.Element)
+				{
+					if (xr.Name == "Data")
+					{
+						TimeData td = new TimeData("");
+
+						//Debug.Log("Element:" + xr.NodeType + " name:" + xr.Name);
+						while (xr.MoveToNextAttribute())
+						{
+							if (xr.Name == "name")
+							{
+								td.Name = xr.Value;
+							}
+
+							if (xr.Name == "scale")
+							{
+								float.TryParse(xr.Value, out td.scale);
+							}
+						}
+
+						TimeList.Add(td.Name, td);
+					}
+				}
+			}
 		}
-		BinaryFormatter bf = new BinaryFormatter();
-		MemoryStream ms = new MemoryStream(mTextAsset.bytes);
-		arcGamePlayTimeMgr.TimeList = bf.Deserialize(ms) as Dictionary<string, arcGamePlayTimeMgr.TimeData>;
 
 	}
 

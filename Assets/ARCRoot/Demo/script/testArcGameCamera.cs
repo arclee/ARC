@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class testarcGameCamera : MonoBehaviour {
+public class testArcGameCamera : MonoBehaviour {
 
 	public GameObject target;
 	// Use this for initialization

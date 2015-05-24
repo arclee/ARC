@@ -138,7 +138,7 @@ public class GameVirtualInputStick : GameVirtualInputBase
 					//算出移動多少比率, 半徑.
 					Vector2 directionV2 = new Vector2(directionWorld.x, directionWorld.y);
 					float directionWorldLeng = directionV2.magnitude;
-					float cirRadius = oldCircleR * transform.localScale.x;
+					float cirRadius = oldCircleR * transform.lossyScale.x;
 					float directionWorldRadiusRatio = directionWorldLeng/cirRadius;
 
 
@@ -181,11 +181,16 @@ public class GameVirtualInputStick : GameVirtualInputBase
 				//放開.
 				if (t.phase == TouchPhase.Ended || (t.phase == TouchPhase.Canceled))
 				{
+					//direction.
+					Vector3 directionWorld = touchWorldPos - stickPosZ0;
+					//算出移動多少比率, 半徑.
+					Vector2 directionV2 = new Vector2(directionWorld.x, directionWorld.y);
+
 					//collider 移回去原位.
 					SetUnTouched();
 					if (onUpEvent != null)
 					{
-						onUpEvent(Vector2.zero);
+						onUpEvent(directionV2.normalized);
 					}
 
 					//長放或短放.
@@ -193,14 +198,14 @@ public class GameVirtualInputStick : GameVirtualInputBase
 					{			
 						if (onLongUpEvent != null)
 						{
-							onLongUpEvent(Vector2.zero);
+							onLongUpEvent(directionV2.normalized);
 						}
 					}
 					else
 					{	
 						if (onShortUpEvent != null)
 						{
-							onShortUpEvent(Vector2.zero);
+							onShortUpEvent(directionV2.normalized);
 						}	
 					}
 

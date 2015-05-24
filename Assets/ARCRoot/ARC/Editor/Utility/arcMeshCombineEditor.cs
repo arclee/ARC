@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class arcMeshCombineEditor : Editor 
 {
 	public bool saveMesh = false;
+	public bool mulitMaterial = false;
 
 	void Start ()
 	{
@@ -17,7 +18,8 @@ public class arcMeshCombineEditor : Editor
 	{
 
 		DrawDefaultInspector();
-
+		
+		mulitMaterial = EditorGUILayout.Toggle("Mulit Material", mulitMaterial);
 		saveMesh = EditorGUILayout.Toggle("Save Mesh", saveMesh);
 
 		if (GUILayout.Button("Combine"))
@@ -56,17 +58,21 @@ public class arcMeshCombineEditor : Editor
 
 		//material.
 		int matcount = 0;
-		for (int i = 0; i < renders.Count; i++)
+		Material[] setmats = null;
+		if (mulitMaterial)
 		{
-			matcount += renders[i].sharedMaterials.Length;
-		}
-		Material[] setmats = new Material[matcount];
-		int matidx = 0;
-		for (int i = 0; i < renders.Count; i++)
-		{
-			for (int j = 0; j < renders[i].sharedMaterials.Length; j++)
+			for (int i = 0; i < renders.Count; i++)
 			{
-				setmats[matidx++] = renders[i].sharedMaterials[j];
+				matcount += renders[i].sharedMaterials.Length;
+			}
+			setmats = new Material[matcount];
+			int matidx = 0;
+			for (int i = 0; i < renders.Count; i++)
+			{
+				for (int j = 0; j < renders[i].sharedMaterials.Length; j++)
+				{
+					setmats[matidx++] = renders[i].sharedMaterials[j];
+				}
 			}
 		}
 
@@ -142,17 +148,39 @@ public class arcMeshCombineEditor : Editor
 		SkinnedMeshRenderer smr = 
 			tar.gameObject.AddComponent(typeof(SkinnedMeshRenderer)) 
 				as SkinnedMeshRenderer;
-
-		me.subMeshCount = subtris.Count;
-		for (int i = 0; i < subtris.Count; i++)
+		
+		if (mulitMaterial)
 		{
-			me.SetTriangles(subtris[i].ToArray(), i);
+			me.subMeshCount = subtris.Count;
+			for (int i = 0; i < subtris.Count; i++)
+			{
+				me.SetTriangles(subtris[i].ToArray(), i);
+			}
+			me.RecalculateBounds();
 		}
-		me.RecalculateBounds();
 
 		smr.sharedMesh = me;
 		smr.bones = aBones;
-		smr.sharedMaterials = setmats;
+
+		if (mulitMaterial)
+		{
+			smr.sharedMaterials = setmats;
+		}
+		else
+		{
+			if (meshFilters.Length > 0)
+			{
+				MeshRenderer mrd = meshFilters[0].gameObject.GetComponent<MeshRenderer>();
+				smr.sharedMaterial = mrd.material;
+			}
+		}
+
+		if (saveMesh)
+		{
+			AssetDatabase.CreateAsset(me, "Assets/" + tar.gameObject.name + ".asset");
+			AssetDatabase.SaveAssets();
+			AssetDatabase.Refresh();
+		}
 	}
 
 }

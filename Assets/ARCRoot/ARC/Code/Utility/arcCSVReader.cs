@@ -6,7 +6,7 @@ using System.Linq;
 public class arcCSVReader
 {
 
-	string mFileName = "";
+	public string mFileName = "";
 
 	TextAsset mTextAsset = null;
 
@@ -25,6 +25,7 @@ public class arcCSVReader
 		}
 
 		Parse();
+		Resources.UnloadAsset(mTextAsset);
 		mTextAsset = null;
 		return true;
 
@@ -102,5 +103,34 @@ public class arcCSVReader
 			textOutput += "\n"; 
 		}
 		Debug.Log(textOutput);
+	}
+
+	public bool GetVal(ref string outval, string key, int colidx)
+	{
+		for(int i =0;i < mData.Count; i++)
+		{
+			if (mData[i][0] == key)
+			{
+				outval = mData[i][colidx];
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public bool GetRow(ref string[] outrol, string key)
+	{
+		for(int i =0;i < mData.Count; i++)
+		{
+			if (mData[i][0] == key)
+			{
+				outrol = mData[i];
+				return true;
+			}
+		}
+		
+		return false;
+
 	}
 }

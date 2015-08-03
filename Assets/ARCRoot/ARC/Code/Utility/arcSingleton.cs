@@ -25,5 +25,19 @@ public class arcSingleton<T> : MonoBehaviour where T : MonoBehaviour
 			return instance;
 		}
 	}
+
+	public void Awake()
+	{
+		if(instance != null)
+		{
+			Destroy(gameObject);
+		}
+		else
+		{
+			DontDestroyOnLoad(gameObject);
+		}
+	}
+
+
 }
 

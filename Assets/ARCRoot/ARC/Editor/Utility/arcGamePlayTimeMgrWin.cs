@@ -32,13 +32,15 @@ public class arcGamePlayTimeMgrWin : EditorWindow
 		{
 			System.IO.Directory.CreateDirectory(arcdir);
 		}
-
+		arcGamePlayTimeMgr.Save(SaveFilePathNameXML);
+		/*
 		BinaryFormatter bf = new BinaryFormatter();
 		FileStream file = File.Create(SaveFilePathName);
 		bf.Serialize(file, arcGamePlayTimeMgr.TimeList);
 		file.Close();
 		AssetDatabase.SaveAssets();
 		AssetDatabase.Refresh();
+		*/
 
 	}
 	
@@ -67,8 +69,7 @@ public class arcGamePlayTimeMgrWin : EditorWindow
 				
 		if (GUILayout.Button("save"))
 		{
-			//Save();
-			arcGamePlayTimeMgr.Save(SaveFilePathNameXML);
+			Save();
 			AssetDatabase.SaveAssets();
 			AssetDatabase.Refresh();
 		}

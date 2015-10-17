@@ -34,7 +34,8 @@ public class arcGameSoundPlayer : MonoBehaviour {
 	bool startfade = false;
 	//目前淡入淡出值.
 	float currentFadeInVal;
-	
+
+	int playFXidx = 0;
 	public AudioClip[] FxClips;
 	public AudioSource[] FXSources;
 
@@ -100,8 +101,9 @@ public class arcGameSoundPlayer : MonoBehaviour {
 		}
 	}
 
-	void PlayBGM(int idx)
+	public void PlayBGM(int idx)
 	{
+		playBGMidx = idx;
 		//切換 bgm.
 		if (CurrentBGMSourceID == BGMSourceID.BGMN)
 		{
@@ -176,6 +178,15 @@ public class arcGameSoundPlayer : MonoBehaviour {
 	public void PlayFX(int idx)
 	{
 		//FXSources[0].clip = FxClips[idx];
-		FXSources[0].PlayOneShot(FxClips[idx]);
+//		for (int i = 0; i < FXSources.Length; i++)
+//		{
+//			//if (!FXSources[i].isPlaying)
+//			{
+//				FXSources[i].PlayOneShot(FxClips[idx]);
+//			}
+//		}
+		FXSources[playFXidx].PlayOneShot(FxClips[idx]);
+		playFXidx++;
+		playFXidx %= FXSources.Length;
 	}
 }

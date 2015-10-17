@@ -22,12 +22,14 @@ public class arcPlatformCtrlWin  : EditorWindow
 	int filestocopycount = 0;
 	int copyedfilecount = 0;
 	bool userestopcopy = false;
+
 	[MenuItem (arcMenu.WindowRoot + "Platfrom/PlatfromCtrl")]
 	static void Init ()
 	{
 		// Get existing open window or if none, make a new one:
 		arcPlatformCtrlWin window = (arcPlatformCtrlWin)EditorWindow.GetWindow (typeof (arcPlatformCtrlWin));
 		window.Show();
+
 	}
 
 	string GetCacheDir(BuildTarget targetname)
@@ -67,34 +69,40 @@ public class arcPlatformCtrlWin  : EditorWindow
 			}
 			//System.Diagnostics.Process p = System.Diagnostics.Process.Start(@"rm -rf " + GetLibDir());
 			p.Start();
+			
+			p.WaitForExit();
 			//Debug.Log(p.ExitCode);
 		
 		}
 
-		while(System.IO.Directory.Exists(GetLibDirName()))
-		{
-
-		}
+//		while(System.IO.Directory.Exists(GetLibDirName()))
+//		{
+//
+//		}
 
 		System.Diagnostics.Process lnp = new System.Diagnostics.Process();
 		lnp.StartInfo.FileName = @"ln";
 		lnp.StartInfo.Arguments =  @"-s " + GetCacheDir(targetname) + " " + GetLibDirName();
 		lnp.Start();
+		lnp.WaitForExit();
+
+//		
+//		while(!System.IO.Directory.Exists(GetLibDirName()))
+//		{
+//			
+//		}
 
 		
-		while(!System.IO.Directory.Exists(GetLibDirName()))
-		{
-			
-		}
-
-		
-		DirectoryInfo directory_infofinal = new DirectoryInfo(GetLibDirName());
-		Debug.Log(directory_infofinal.Attributes);
+//		DirectoryInfo directory_infofinal = new DirectoryInfo(GetLibDirName());
+//		Debug.Log(directory_infofinal.Attributes);
 		
 	}
 
-	void SwitchPlatform(BuildTarget targetname)
+	void SwitchPlatform(BuildTarget targetname, BuildTargetGroup targetgroup)
 	{
+		
+		AssetDatabase.Refresh();
+
 		//backup old cache. ex:android.
 		DirectoryInfo directory_info = new DirectoryInfo(GetLibDirName());
 		
@@ -120,8 +128,9 @@ public class arcPlatformCtrlWin  : EditorWindow
 
 		ReLinkToCache(targetname);
 
-		EditorUserBuildSettings.SwitchActiveBuildTarget(targetname);
+		SwitchPlatformUnity(targetname, targetgroup);
 	}
+
 
 	bool CreatCache(BuildTarget targetname)
 	{
@@ -159,7 +168,7 @@ public class arcPlatformCtrlWin  : EditorWindow
 		return true;
 	}
 
-	void ShowPlatformButton(ref Rect rect, BuildTarget targetname)
+	void ShowPlatformButton(ref Rect rect, BuildTarget targetname, BuildTargetGroup targetgroup)
 	{
 		rect.y += newline;
 		GUI.Label(rect, targetname.ToString());
@@ -201,9 +210,16 @@ public class arcPlatformCtrlWin  : EditorWindow
 			//int filecount = GetFileCount(GetCacheDir(targetname), true);
 			//if (filecount > 1)
 			{
-				if (GUI.Button(rect, "switch"))
+				if (EditorApplication.isCompiling)
 				{
-					SwitchPlatform(targetname);
+					GUI.Label(rect, "isCompiling...");
+				}
+				else
+				{
+					if (GUI.Button(rect, "switch"))
+					{
+						SwitchPlatform(targetname, targetgroup);
+					}
 				}
 			}
 		}
@@ -215,13 +231,83 @@ public class arcPlatformCtrlWin  : EditorWindow
 //		rect.x += fieldwidth;
 //		if (GUI.Button(rect, "switch2"))
 //		{
-//			EditorUserBuildSettings.SwitchActiveBuildTarget(targetname);
+//			SwitchPlatformUnity(targetname, targetgroup);
 //		}
 
 		rect.x = oldx;
 	}
 
+	void SwitchPlatformUnity(BuildTarget targetname, BuildTargetGroup targetgroup)
+	{
+		EditorUserBuildSettings.SwitchActiveBuildTarget(targetname);
+		EditorUserBuildSettings.selectedBuildTargetGroup = targetgroup;
+		ReImportAssets();
+		
+		UnityEditor.Sprites.Packer.RebuildAtlasCacheIfNeeded(targetname, true, UnityEditor.Sprites.Packer.Execution.ForceRegroup);
+		AssetDatabase.Refresh();
+	}
 
+	void ReImportAssets()
+	{
+		string assetsPath = Application.dataPath;
+		int assetsPathLength = assetsPath.Length - 6;
+		string metadataPath = GetLibDirName() + "/metadata";
+
+		string[] assetFiles = Directory.GetFiles(Application.dataPath, "*.*", SearchOption.AllDirectories);
+		string[] assetDirectories = Directory.GetDirectories(Application.dataPath, "*.*", SearchOption.AllDirectories);
+
+		
+		// Look for missing metadata files
+		int currentAsset = 0;
+		int assetCount = assetFiles.Length + assetDirectories.Length;
+		foreach (var file in assetFiles) {
+			if (file.EndsWith(".meta"))
+				continue;
+			if (file.EndsWith(".DS_Store"))
+				continue;
+
+			string assetPath = file.Remove(0, assetsPathLength);
+			EditorUtility.DisplayProgressBar("Hold on", "Reimporting changed assets..."
+			                                 //+ currentAsset.ToString() + "/" + assetCount.ToString()
+			                                 //+ " " + assetPath
+			                                 ,
+			                                 (float)currentAsset/(float)assetCount);
+
+			string guid = AssetDatabase.AssetPathToGUID(assetPath);
+
+			bool hasguid = !string.IsNullOrEmpty(guid);
+			string guidfilename = metadataPath + "/" + guid.Substring(0,2) + "/" + guid;
+			bool nometa = !File.Exists(guidfilename);
+			if (hasguid && nometa)
+			{
+				AssetDatabase.ImportAsset (assetPath, ImportAssetOptions.ForceUpdate);
+				Debug.Log("reimport " + assetPath);
+			}
+			currentAsset++;
+		}
+		
+		foreach (var directory in assetDirectories)
+		{
+
+			string assetPath = directory.Remove(0, assetsPathLength);
+			EditorUtility.DisplayProgressBar("Hold on", "Reimporting changed assets..."
+			                                 //+ currentAsset.ToString() + "/" + assetCount.ToString()
+			                                 //+ " " + assetPath
+			                                 ,
+			                                 (float)currentAsset/(float)assetCount);
+			string guid = AssetDatabase.AssetPathToGUID(assetPath);
+			if (!string.IsNullOrEmpty(guid) && !File.Exists(metadataPath + "/" + guid.Substring(0,2) + "/" + guid))
+				AssetDatabase.ImportAsset (assetPath, ImportAssetOptions.ForceUpdate);
+			currentAsset++;
+		}
+
+		
+		EditorUtility.ClearProgressBar();
+
+		// Refresh asset database
+		AssetDatabase.Refresh();
+	}
+	
 	void DrawProgress(Rect rect, float progress)
 	{
 
@@ -315,9 +401,9 @@ public class arcPlatformCtrlWin  : EditorWindow
 		GUI.Label(rect, "PlatformCtr");
 	
 
-		ShowPlatformButton(ref rect, BuildTarget.WebPlayer);
-		ShowPlatformButton(ref rect, BuildTarget.Android);
-		ShowPlatformButton(ref rect, BuildTarget.iOS);
+		ShowPlatformButton(ref rect, BuildTarget.WebPlayer, BuildTargetGroup.WebPlayer);
+		ShowPlatformButton(ref rect, BuildTarget.Android, BuildTargetGroup.Android);
+		ShowPlatformButton(ref rect, BuildTarget.iOS, BuildTargetGroup.iOS);
 
 
 		

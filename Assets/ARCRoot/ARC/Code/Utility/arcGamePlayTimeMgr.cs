@@ -83,7 +83,7 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 
 	static public void Save(string SaveFilePathName)
 	{
-		arcCrypto.WriteText(SaveFilePathName + ".txt", SaveXMLCB, false, SaveFilePathName + "c.txt");
+		arcCrypto.WriteText(SaveFilePathName + ".bytes", SaveXMLCB, false, SaveFilePathName + "c.bytes");
 	}
 
 	static void SaveXMLCB(StreamWriter writer)

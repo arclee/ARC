@@ -12,7 +12,7 @@ public class arcGamePlayTimeMgrWin : EditorWindow
 	static string TimeName = "";
 	static TextAsset mTextAsset = null;
 	static List<string> RemoveList = new List<string>();
-	static string SaveFilePathName = Application.dataPath + "/" + arcMenu.ResourceRoot + arcMenu.ResourceDir +"timemgr.bytes";
+	//static string SaveFilePathName = Application.dataPath + "/" + arcMenu.ResourceRoot + arcMenu.ResourceDir +"timemgr.bytes";
 	
 	static string SaveFilePathNameXML = Application.dataPath + "/" + arcMenu.ResourceRoot + arcMenu.ResourceDir +"timemgrtext";
 

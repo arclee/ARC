@@ -102,7 +102,16 @@ public class arcCSVReader
 			}
 			textOutput += "\n"; 
 		}
-		Debug.Log(textOutput);
+		//Debug.Log(textOutput);
+	}
+
+	public int GetRowCountY()
+	{
+		return mData.Count;
+	}
+	public int GetColCountX()
+	{
+		return mData[0].Length;
 	}
 
 	public bool GetVal(ref string outval, string key, int colidx)
@@ -131,6 +140,5 @@ public class arcCSVReader
 		}
 		
 		return false;
-
 	}
 }

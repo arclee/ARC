@@ -354,6 +354,7 @@ public class arcCrypto
 			}
 			
 			int.TryParse(val, out crc);
+			fileStream.Close();
 			//Debug.Log("read crc:" + crc.ToString());
 		}
 		
@@ -366,9 +367,11 @@ public class arcCrypto
 			fileStream.Read(bytes, 0, (int)fileStream.Length);			
 			checkcrc = getCRC(bytes);
 			//Debug.Log("checkcrc:" + checkcrc.ToString());
+
+			fileStream.Close();
 		}
 		
-		if (crc != checkcrc)
+		if (useCrypto && (crc != checkcrc))
 		{
 			Debug.Log("File check error!");
 			return false;
@@ -406,6 +409,7 @@ public class arcCrypto
 				cryptoStream.Close();
 				cryptoStream = null;
 			}
+			fileStream.Close();
 		}
 		
 		return true;
@@ -460,7 +464,7 @@ public class arcCrypto
 			//Debug.Log("checkcrc:" + checkcrc.ToString());
 		}
 		
-		if (crc != checkcrc)
+		if (useCrypto && (crc != checkcrc))
 		{
 			Debug.Log("File Check Error!");
 			return false;

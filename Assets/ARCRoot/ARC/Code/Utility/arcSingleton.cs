@@ -26,6 +26,11 @@ public class arcSingleton<T> : MonoBehaviour where T : MonoBehaviour
 		}
 	}
 
+	public virtual void DerivedAwake()
+	{
+
+	}
+
 	public void Awake()
 	{
 		if(instance != null)
@@ -35,7 +40,9 @@ public class arcSingleton<T> : MonoBehaviour where T : MonoBehaviour
 		else
 		{
 			DontDestroyOnLoad(gameObject);
+			DerivedAwake();
 		}
+
 	}
 
 

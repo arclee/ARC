@@ -10,7 +10,7 @@ public class arcGamePoolMgr<T> : MonoBehaviour where T : MonoBehaviour
 	public bool Grawable = false;
 	public int MaxObj = 10;
 	public int debugid = 0;
-	
+	  
 		
 	protected Dictionary<string, GameObjPool> pooldict = new Dictionary<string, GameObjPool>();
 	
@@ -68,7 +68,7 @@ public class arcGamePoolMgr<T> : MonoBehaviour where T : MonoBehaviour
 			objpool.grawable = Grawable;
 			objpool.maxobj = MaxObj;
 			objpool.prefabName = prefabname;
-			objpool.PreCreate(gameObject);
+			//objpool.PreCreate(gameObject);
 			pooldict.Add(prefabname, objpool);
 			return pooldict[prefabname].GetObject();
 		}
@@ -90,11 +90,34 @@ public class arcGamePoolMgr<T> : MonoBehaviour where T : MonoBehaviour
 			objpool.grawable = Grawable;
 			objpool.maxobj = MaxObj;
 			objpool.prefabName = prefab.name;
-			objpool.PreCreatePrefab(prefab, gameObject);
+			objpool.templatePrefabObj = prefab;
+			objpool.Inital(gameObject);
+			//objpool.PreCreatePrefab(prefab, gameObject);
 			pooldict.Add(prefab.GetHashCode().ToString(), objpool);
 			return pooldict[prefab.GetHashCode().ToString()].GetObject();
 		}
 
+	}
+
+	public void PreCreate(GameObject prefab, int count)
+	{
+		string hashname = prefab.GetHashCode().ToString();
+		GameObjPool objpool = null;
+		if (pooldict.ContainsKey(hashname))
+		{
+			objpool = pooldict[hashname];
+		}
+		else
+		{
+			objpool = new GameObjPool();
+			objpool.grawable = Grawable;
+			objpool.maxobj = MaxObj;
+			objpool.prefabName = prefab.name;
+			pooldict.Add(prefab.GetHashCode().ToString(), objpool);
+
+		}
+		
+		objpool.PreCreatePrefabCont(prefab, gameObject, count);
 	}
 
 	public void RestoreObj(GameObject obj)
@@ -109,7 +132,15 @@ public class arcGamePoolMgr<T> : MonoBehaviour where T : MonoBehaviour
 			pa.Value.DisableAll();
 		}
 	}
-
+	
+	public void DestoryAll()
+	{
+		foreach(KeyValuePair<string, GameObjPool> pa in pooldict)
+		{
+			pa.Value.DestoryAll();
+		}
+		pooldict.Clear();
+	}
 
 
 }

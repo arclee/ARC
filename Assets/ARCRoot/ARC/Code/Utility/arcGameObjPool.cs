@@ -16,17 +16,22 @@ public class GameObjPool
 	//GameObject parentGameObject;
 	// Use this for initialization
 
-	void Inital()
+	public void Inital(GameObject parent = null)
 	{
 		if (gameObject == null)
 		{
 			gameObject = new GameObject(prefabName);
+			gameObject.transform.parent = parent.transform;
+		}
+		else
+		{
+			gameObject.transform.parent = parent.transform;
 		}
 	}
 
 	public void PreCreate (GameObject parent)
 	{
-		Inital();
+		Inital(parent);
 		gameObject.transform.parent = parent.transform;
 		templatePrefabObj = (GameObject)Resources.Load(prefabName);
 		if (!templatePrefabObj)
@@ -44,7 +49,7 @@ public class GameObjPool
 	
 	public void PreCreatePrefab (GameObject prefab, GameObject parent)
 	{
-		Inital();
+		Inital(parent);
 		gameObject.transform.parent = parent.transform;
 		templatePrefabObj = prefab;
 		if (!templatePrefabObj)
@@ -53,10 +58,35 @@ public class GameObjPool
 			return;
 		}
 		
-		
-		for (int i = 0; i < maxobj; i++)
+		int need = maxobj - pool.Count;
+		if (need > 0)
 		{
-			CreateOneObj();
+			for (int i = 0; i < need; i++)
+			{
+				CreateOneObj();
+			}
+		}
+	}
+
+	
+	public void PreCreatePrefabCont(GameObject prefab, GameObject parent, int count)
+	{
+		Inital(parent);
+		gameObject.transform.parent = parent.transform;
+		templatePrefabObj = prefab;
+		if (!templatePrefabObj)
+		{
+			Debug.Log(this.GetType().ToString() + " PreCreate fail " + prefabName);
+			return;
+		}
+		
+		int need = count - pool.Count;
+		if (need > 0)
+		{
+			for (int i = 0; i < need; i++)
+			{
+				CreateOneObj();
+			}
 		}
 	}
 
@@ -83,7 +113,7 @@ public class GameObjPool
 	public GameObject GetObject()
 	{
 		int poolcount = pool.Count;
-		for (int i = 0; i < maxobj; i++)
+		for (int i = 0; i < poolcount; i++)
 		{
 			poolidx = (poolidx + 1) % poolcount;
 			if (!pool[poolidx].activeSelf)
@@ -111,5 +141,16 @@ public class GameObjPool
 			pool[i].SetActive(false);		
 		}
 
+	}
+	
+	public void DestoryAll()
+	{
+		int poolcount = pool.Count;
+		for (int i = 0; i < poolcount; i++)
+		{
+			GameObject.Destroy(pool[i]);
+		}
+		pool.Clear();
+		GameObject.Destroy(gameObject);
 	}
 }

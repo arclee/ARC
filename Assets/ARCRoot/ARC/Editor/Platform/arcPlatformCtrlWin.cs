@@ -239,16 +239,19 @@ public class arcPlatformCtrlWin  : EditorWindow
 
 	void SwitchPlatformUnity(BuildTarget targetname, BuildTargetGroup targetgroup)
 	{
+		#if false
 		EditorUserBuildSettings.SwitchActiveBuildTarget(targetname);
 		EditorUserBuildSettings.selectedBuildTargetGroup = targetgroup;
 		ReImportAssets();
 		
 		UnityEditor.Sprites.Packer.RebuildAtlasCacheIfNeeded(targetname, true, UnityEditor.Sprites.Packer.Execution.ForceRegroup);
 		AssetDatabase.Refresh();
+		#endif
 	}
 
 	void ReImportAssets()
 	{
+		#if false
 		string assetsPath = Application.dataPath;
 		int assetsPathLength = assetsPath.Length - 6;
 		string metadataPath = GetLibDirName() + "/metadata";
@@ -306,6 +309,8 @@ public class arcPlatformCtrlWin  : EditorWindow
 
 		// Refresh asset database
 		AssetDatabase.Refresh();
+
+		#endif
 	}
 	
 	void DrawProgress(Rect rect, float progress)
@@ -400,12 +405,12 @@ public class arcPlatformCtrlWin  : EditorWindow
 		Rect rect = new Rect(0, 0, 100, lineheight);
 		GUI.Label(rect, "PlatformCtr");
 	
-
+		#if false
 		ShowPlatformButton(ref rect, BuildTarget.WebPlayer, BuildTargetGroup.WebPlayer);
 		ShowPlatformButton(ref rect, BuildTarget.Android, BuildTargetGroup.Android);
 		ShowPlatformButton(ref rect, BuildTarget.iOS, BuildTargetGroup.iOS);
 
 
-		
+		#endif
 	}
 }

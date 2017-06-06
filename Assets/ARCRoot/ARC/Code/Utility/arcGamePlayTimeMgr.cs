@@ -51,7 +51,7 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 		}
 	}
 	
-	static TextAsset mTextAsset = null;
+	//static TextAsset mTextAsset = null;
 	static public string SaveFileName = "ARC/timemgrtext";
 
 	static int version = 1;
@@ -208,7 +208,7 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 
 	}
 
-	void Awake()
+	public override void DerivedAwake()
 	{
 		Load();
 	}

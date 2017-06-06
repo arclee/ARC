@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class arcGameSoundPlayer : MonoBehaviour {
+public class arcGameSoundPlayer : arcSingleton<arcGameSoundPlayer> {
 
-	public static arcGameSoundPlayer instance;
 	public enum BGMSourceID
 	{
 		BGMN = 0,
@@ -22,7 +21,7 @@ public class arcGameSoundPlayer : MonoBehaviour {
 	//淡入淡出時間.
 	public float fadeInTime = 1.0f;
 	//目前播那一個 audio clip.
-	int playBGMidx = 0;
+	int playBGMidx = -1;
 	
 	//是否使用淡入淡出.
 	public bool UseFade = true;
@@ -43,18 +42,18 @@ public class arcGameSoundPlayer : MonoBehaviour {
 	public int GUIScreenSizeX = 845;
 	public int GUIScreenSizeY = 480;
 	
-	void Awake ()
-	{
-		if (instance == null)
-		{
-			instance = this;
-			DontDestroyOnLoad(gameObject);
-		}
-		else
-		{
-			Destroy(gameObject);
-		}
-	}
+//	public override void DerivedAwake()
+//	{
+//		if (instance == null)
+//		{
+//			instance = this;
+//			DontDestroyOnLoad(gameObject);
+//		}
+//		else
+//		{
+//			Destroy(gameObject);
+//		}
+//	}
 
 	// Use this for initialization
 	void Start ()
@@ -101,16 +100,39 @@ public class arcGameSoundPlayer : MonoBehaviour {
 		}
 	}
 
-	public void PlayBGM(int idx)
+	public int GetBGMCurrentTime()
 	{
+		if (CurrentBGMSourceID == BGMSourceID.BGM1)
+		{
+			return BGMSource1.timeSamples;
+		}
+		else if (CurrentBGMSourceID == BGMSourceID.BGM2)
+		{
+			return BGMSource2.timeSamples;
+		}
+		
+		return 0;
+	}
+
+	public int GetCurrentBGMIdx()
+	{
+		return playBGMidx;
+	}
+
+	public void PlayBGM(int idx, int starttime = 0)
+	{
+		if (playBGMidx == idx)
+		{
+			return;
+		}
 		playBGMidx = idx;
 		//切換 bgm.
 		if (CurrentBGMSourceID == BGMSourceID.BGMN)
 		{
 			CurrentBGMSourceID = BGMSourceID.BGM1;
 			BGMSource1.clip = BGMS[playBGMidx];
+			BGMSource1.timeSamples = starttime;
 			BGMSource1.Play();
-
 			//不使用淡入淡出就直接設音量及停止舊的.
 			if (!UseFade)
 			{
@@ -127,6 +149,7 @@ public class arcGameSoundPlayer : MonoBehaviour {
 				BGMSourceOldFadeVol = BGMSource1.volume;
 				CurrentBGMSourceID = BGMSourceID.BGM2;
 				BGMSource2.clip = BGMS[playBGMidx];
+				BGMSource2.timeSamples = starttime;
 				BGMSource2.Play();
 				
 				//不使用淡入淡出就直接設音量及停止舊的.
@@ -141,6 +164,7 @@ public class arcGameSoundPlayer : MonoBehaviour {
 				BGMSourceOldFadeVol = BGMSource2.volume;
 				CurrentBGMSourceID = BGMSourceID.BGM1;
 				BGMSource1.clip = BGMS[playBGMidx];
+				BGMSource1.timeSamples = starttime;
 				BGMSource1.Play();
 
 				if (!UseFade)

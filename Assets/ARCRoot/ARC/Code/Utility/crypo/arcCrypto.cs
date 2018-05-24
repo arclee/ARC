@@ -16,10 +16,10 @@ public class arcCrypto
 	public delegate void ReadTextCB(StreamReader reader);
 	public delegate void ReadBinCB(BinaryReader reader, FileStream fileStream, CryptoStream cryptoStream);
 	
-	static arcCrypto()
-	{
-		initCrypto();
-	}
+	//static arcCrypto()
+	//{
+	//	initCrypto();
+	//}
 	
 	static byte[] MakeKey(string input)
 	{
@@ -33,7 +33,7 @@ public class arcCrypto
 		return Encoding.ASCII.GetBytes(mod);
 	}
 	
-	static void initCrypto()
+	static public void initCrypto()
 	{
 		
 		if (algorithm == null)
@@ -42,7 +42,11 @@ public class arcCrypto
 			algorithm = TripleDES.Create();
 			algorithm.Key = MakeKey(uniqueID);
 			algorithm.IV = MakeIV(uniqueID);
-		}
+#if UNITY_EDITOR
+            Debug.Log("algorithm.Key:" + algorithm.Key);
+            Debug.Log("algorithm.IV:" + algorithm.IV);
+#endif
+        }
 		if (serviceProvider == null)
 		{
 			serviceProvider = new TripleDESCryptoServiceProvider();
@@ -343,8 +347,19 @@ public class arcCrypto
 			{
 				reader = new StreamReader(fileStream);
 			}
-			string val = reader.ReadToEnd();
-			
+
+            string val = "";
+            try
+            {
+                val = reader.ReadToEnd();
+            }
+            catch (System.Exception e)
+            {
+                Debug.Log(e);
+                return false;
+            }
+
+
 			reader.Close();
 			reader = null;
 			if (useCrypto)
@@ -371,7 +386,7 @@ public class arcCrypto
 			fileStream.Close();
 		}
 		
-		if (useCrypto && (crc != checkcrc))
+		if ((crc != checkcrc))
 		{
 			Debug.Log("File check error!");
 			return false;

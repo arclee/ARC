@@ -222,18 +222,19 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 	// Update is called once per frame
 	void Update ()
 	{
-		foreach(KeyValuePair<string, TimeData>  kp in TimeList)
-		{
-			if (kp.Value.Enable && kp.Value.isPlaying())
-			{
-				kp.Value.DeltaTime = Time.deltaTime * kp.Value.scale;
-				kp.Value.TotalTime += kp.Value.DeltaTime;
-			}
-			else
-			{
-				kp.Value.DeltaTime = 0;
-			}
-		}
+        Dictionary<string, TimeData>.Enumerator etor = TimeList.GetEnumerator();
+        while (etor.MoveNext())
+        {
+            if (etor.Current.Value.Enable && etor.Current.Value.isPlaying())
+            {
+                etor.Current.Value.DeltaTime = Time.deltaTime * etor.Current.Value.scale;
+                etor.Current.Value.TotalTime += etor.Current.Value.DeltaTime;
+            }
+            else
+            {
+                etor.Current.Value.DeltaTime = 0;
+            }
+        }
 	}
 
 	static public TimeData CrateTime(string name)
@@ -314,19 +315,21 @@ public class arcGamePlayTimeMgr : arcSingleton<arcGamePlayTimeMgr>
 	{
 		backuplist.Clear();
 
-		foreach (KeyValuePair<string, TimeData> kp in TimeList)
-		{
-			backuplist.Add(kp.Key, kp.Value.Enable);
-		}
+        Dictionary<string, TimeData>.Enumerator etor = TimeList.GetEnumerator();
+        while (etor.MoveNext())
+        {
+            backuplist.Add(etor.Current.Key, etor.Current.Value.Enable);
+
+        }
 	}
 
 	static public void SetRestoreEnable(ref Dictionary<string, bool> backuplist)
-	{
-		foreach (KeyValuePair<string, bool> kp in backuplist)
-		{
-			SetEnable(kp.Key, kp.Value);
-		}
-
+    {
+        Dictionary<string, bool>.Enumerator etor = backuplist.GetEnumerator();
+        while (etor.MoveNext())
+        {
+            SetEnable(etor.Current.Key, etor.Current.Value);
+        }
 	}
 
 }

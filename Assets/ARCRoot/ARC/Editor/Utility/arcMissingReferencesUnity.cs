@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -104,25 +105,20 @@ public class arcMissingReferencesFinder : MonoBehaviour
                 for (int j = 0; j < Comp.triggers[i].callback.GetPersistentEventCount(); j++)
                 {
                     string MethoName = Comp.triggers[i].callback.GetPersistentMethodName(j);
-                    System.Reflection.MethodInfo MI = Comp.triggers[i].callback.GetPersistentTarget(j).GetType().GetMethod(MethoName);
-                    if (MI == null)
-                    {
-                        Debug.LogError("Missing Method : " + MethoName + " in GO: " + GetFullPath(go), go);
-                    }
+                    Object TObj = Comp.triggers[i].callback.GetPersistentTarget(j);
+                    checkMethords(go, TObj, MethoName);
                 }
             }
         }
         else if (c.GetType() == typeof(Button))
         {
-            Button Comp = c as Button;     
+            Button Comp = c as Button;
+
             for (int j = 0; j < Comp.onClick.GetPersistentEventCount(); j++)
             {
                 string MethoName = Comp.onClick.GetPersistentMethodName(j);
-                System.Reflection.MethodInfo MI = Comp.onClick.GetPersistentTarget(j).GetType().GetMethod(MethoName);
-                if (MI == null)
-                {
-                    Debug.LogError("Missing Method : " + MethoName + " in GO: " + GetFullPath(go), go);
-                }
+                Object TObj = Comp.onClick.GetPersistentTarget(j);                
+                checkMethords(go, TObj, MethoName);
             }
         }
         else if (c.GetType() == typeof(Toggle))
@@ -131,11 +127,8 @@ public class arcMissingReferencesFinder : MonoBehaviour
             for (int j = 0; j < Comp.onValueChanged.GetPersistentEventCount(); j++)
             {
                 string MethoName = Comp.onValueChanged.GetPersistentMethodName(j);
-                System.Reflection.MethodInfo MI = Comp.onValueChanged.GetPersistentTarget(j).GetType().GetMethod(MethoName);
-                if (MI == null)
-                {
-                    Debug.LogError("Missing Method : " + MethoName + " in GO: " + GetFullPath(go), go);
-                }
+                Object TObj = Comp.onValueChanged.GetPersistentTarget(j);
+                checkMethords(go, TObj, MethoName);
             }
         }
         else if (c.GetType() == typeof(Slider))
@@ -144,11 +137,8 @@ public class arcMissingReferencesFinder : MonoBehaviour
             for (int j = 0; j < Comp.onValueChanged.GetPersistentEventCount(); j++)
             {
                 string MethoName = Comp.onValueChanged.GetPersistentMethodName(j);
-                System.Reflection.MethodInfo MI = Comp.onValueChanged.GetPersistentTarget(j).GetType().GetMethod(MethoName);
-                if (MI == null)
-                {
-                    Debug.LogError("Missing Method : " + MethoName + " in GO: " + GetFullPath(go), go);
-                }
+                Object TObj = Comp.onValueChanged.GetPersistentTarget(j);
+                checkMethords(go, TObj, MethoName);
             }
         }
         else if (c.GetType() == typeof(Scrollbar))
@@ -157,11 +147,8 @@ public class arcMissingReferencesFinder : MonoBehaviour
             for (int j = 0; j < Comp.onValueChanged.GetPersistentEventCount(); j++)
             {
                 string MethoName = Comp.onValueChanged.GetPersistentMethodName(j);
-                System.Reflection.MethodInfo MI = Comp.onValueChanged.GetPersistentTarget(j).GetType().GetMethod(MethoName);
-                if (MI == null)
-                {
-                    Debug.LogError("Missing Method : " + MethoName + " in GO: " + GetFullPath(go), go);
-                }
+                Object TObj = Comp.onValueChanged.GetPersistentTarget(j);
+                checkMethords(go, TObj, MethoName);
             }
         }
         else if (c.GetType() == typeof(Dropdown))
@@ -170,11 +157,8 @@ public class arcMissingReferencesFinder : MonoBehaviour
             for (int j = 0; j < Comp.onValueChanged.GetPersistentEventCount(); j++)
             {
                 string MethoName = Comp.onValueChanged.GetPersistentMethodName(j);
-                System.Reflection.MethodInfo MI = Comp.onValueChanged.GetPersistentTarget(j).GetType().GetMethod(MethoName);
-                if (MI == null)
-                {
-                    Debug.LogError("Missing Method : " + MethoName + " in GO: " + GetFullPath(go), go);
-                }
+                Object TObj = Comp.onValueChanged.GetPersistentTarget(j);
+                checkMethords(go, TObj, MethoName);
             }
         }
         else if (c.GetType() == typeof(InputField))
@@ -183,21 +167,15 @@ public class arcMissingReferencesFinder : MonoBehaviour
             for (int j = 0; j < Comp.onValueChanged.GetPersistentEventCount(); j++)
             {
                 string MethoName = Comp.onValueChanged.GetPersistentMethodName(j);
-                System.Reflection.MethodInfo MI = Comp.onValueChanged.GetPersistentTarget(j).GetType().GetMethod(MethoName);
-                if (MI == null)
-                {
-                    Debug.LogError("Missing Method : " + MethoName + " in GO: " + GetFullPath(go), go);
-                }
+                Object TObj = Comp.onValueChanged.GetPersistentTarget(j);
+                checkMethords(go, TObj, MethoName);
             }
 
             for (int j = 0; j < Comp.onEndEdit.GetPersistentEventCount(); j++)
             {
                 string MethoName = Comp.onEndEdit.GetPersistentMethodName(j);
-                System.Reflection.MethodInfo MI = Comp.onEndEdit.GetPersistentTarget(j).GetType().GetMethod(MethoName);
-                if (MI == null)
-                {
-                    Debug.LogError("Missing Method : " + MethoName + " in GO: " + GetFullPath(go), go);
-                }
+                Object TObj = Comp.onEndEdit.GetPersistentTarget(j);
+                checkMethords(go, TObj, MethoName);
             }
         }
         else if (c.GetType() == typeof(ScrollRect))
@@ -206,16 +184,89 @@ public class arcMissingReferencesFinder : MonoBehaviour
             for (int j = 0; j < Comp.onValueChanged.GetPersistentEventCount(); j++)
             {
                 string MethoName = Comp.onValueChanged.GetPersistentMethodName(j);
-                System.Reflection.MethodInfo MI = Comp.onValueChanged.GetPersistentTarget(j).GetType().GetMethod(MethoName);
-                if (MI == null)
-                {
-                    Debug.LogError("Missing Method : " + MethoName + " in GO: " + GetFullPath(go), go);
-                }
+                Object TObj = Comp.onValueChanged.GetPersistentTarget(j);
+                checkMethords(go, TObj, MethoName);
             }
 
+        }       
+    }
+
+    private static void checkMethords(GameObject go, UnityEngine.Object tob, string methordname)
+    {
+        try
+        {
+            if (tob == null)
+            {
+                Debug.LogError("Missing Method : " + methordname + " in GO: " + GetFullPath(go), go);
+                return;
+            }
+
+            string objectFullNameWithNamespace = tob.GetType().FullName;
+            if (!classExist(tob.GetType().Assembly, objectFullNameWithNamespace))
+            {
+                Debug.LogError("Missing Method : " + methordname + " in GO: " + GetFullPath(go), go);
+                return;
+            }
+
+            bool isfind = false;
+            int methordcount = 0;
+            MethodInfo[] MI = tob.GetType().GetMethods();
+            for (int i = 0; i < MI.Length; i++)
+            {
+                if (MI[i].Name == methordname && MI[i].IsPublic)
+                {
+                    methordcount++;
+                    isfind = true;
+                }
+            }
+            
+            if (methordcount > 1)
+            {
+                Debug.LogWarning("Missing Method (multi same name) YOU SHOULD CHECK: " + methordname + " in GO: " + GetFullPath(go), go);
+            }
+
+            if (!isfind)
+            {
+                Debug.LogError("Missing Method : " + methordname + " in GO: " + GetFullPath(go), go);
+            }
         }
-    
-    
+        catch (System.Exception e)
+        {
+            Debug.Log(e);
+        }
+    }
+        
+
+    // 來自 https://stackoverflow.com/questions/42784338/unity-missing-warning-when-button-has-missing-onclick .
+    //Checks if class exit or has been renamed
+    private static bool classExist(Assembly asm, string className)
+    {        
+        System.Type[] tps = asm.GetTypes();
+        for (int i = 0; i < tps.Length; i++)
+        {
+            if (tps[i].FullName == className)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    //Checks if functions exist as public function
+    private static bool functionExistAsPublicInTarget(UnityEngine.Object target, string functionName)
+    {
+        System.Type type = target.GetType();
+        MethodInfo targetinfo = type.GetMethod(functionName);
+        return targetinfo != null;
+    }
+
+    //Checks if functions exist as private function
+    private static bool functionExistAsPrivateInTarget(UnityEngine.Object target, string functionName)
+    {
+        System.Type type = target.GetType();
+        MethodInfo targetinfo = type.GetMethod(functionName, BindingFlags.Instance | BindingFlags.NonPublic);
+        return targetinfo != null;
     }
 
     private static GameObject[] GetSceneObjects()

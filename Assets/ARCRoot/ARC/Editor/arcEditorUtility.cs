@@ -26,9 +26,16 @@ public static class arcEditorUtility
 	public static void OpenAssetsStoreDownloadPath()
 	{
 		string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-		EditorUtility.RevealInFinder(path + "/Library/Unity/Asset Store-5.x/");
 
-	}
+        if (Application.platform == RuntimePlatform.WindowsEditor)
+        {
+            EditorUtility.RevealInFinder(path + "\\..\\AppData\\Roaming\\Unity\\Asset Store-5.x");
+        }
+        else
+        {
+            EditorUtility.RevealInFinder(path + "/Library/Unity/Asset Store-5.x/");
+        }
+    }
 
 	public static void OpenInMac(string path)
 	{

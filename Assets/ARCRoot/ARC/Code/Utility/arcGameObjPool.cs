@@ -21,18 +21,18 @@ public class GameObjPool
 		if (gameObject == null)
 		{
 			gameObject = new GameObject(prefabName);
-			gameObject.transform.parent = parent.transform;
+			gameObject.transform.SetParent(parent.transform);
 		}
 		else
 		{
-			gameObject.transform.parent = parent.transform;
+			gameObject.transform.SetParent(parent.transform);
 		}
 	}
 
 	public void PreCreate (GameObject parent)
 	{
 		Inital(parent);
-		gameObject.transform.parent = parent.transform;
+		gameObject.transform.SetParent(parent.transform);
 		templatePrefabObj = (GameObject)Resources.Load(prefabName);
 		if (!templatePrefabObj)
 		{
@@ -50,7 +50,7 @@ public class GameObjPool
 	public void PreCreatePrefab (GameObject prefab, GameObject parent)
 	{
 		Inital(parent);
-		gameObject.transform.parent = parent.transform;
+		gameObject.transform.SetParent(parent.transform);
 		templatePrefabObj = prefab;
 		if (!templatePrefabObj)
 		{
@@ -72,7 +72,7 @@ public class GameObjPool
 	public void PreCreatePrefabCont(GameObject prefab, GameObject parent, int count)
 	{
 		Inital(parent);
-		gameObject.transform.parent = parent.transform;
+		gameObject.transform.SetParent(parent.transform);
 		templatePrefabObj = prefab;
 		if (!templatePrefabObj)
 		{
@@ -90,11 +90,18 @@ public class GameObjPool
 		}
 	}
 
-	GameObject CreateOneObj()
+	GameObject CreateOneObj(GameObject parent = null)
 	{
-		GameObject newob = (GameObject)GameObject.Instantiate(templatePrefabObj);
-		
-		newob.transform.parent = gameObject.transform;
+        GameObject newob = null;
+        if (parent != null)
+        {
+            newob = (GameObject)GameObject.Instantiate(templatePrefabObj, parent.transform);
+        }
+        else
+        {
+            newob = (GameObject)GameObject.Instantiate(templatePrefabObj, gameObject.transform);
+            //newob.transform.SetParent(gameObject.transform);
+        }
 
 		newob.name = newob.name + pool.Count.ToString();
 		newob.SetActive(false);
@@ -110,7 +117,7 @@ public class GameObjPool
 //		}
 	}
 
-	public GameObject GetObject()
+	public GameObject GetObject(GameObject parent = null)
 	{
 		int poolcount = pool.Count;
 		for (int i = 0; i < poolcount; i++)
@@ -119,13 +126,18 @@ public class GameObjPool
 			if (!pool[poolidx].activeSelf)
 			{
 				pool[poolidx].SetActive(true);
-				return pool[poolidx];
+
+                if (parent != null)
+                {
+                    pool[poolidx].transform.SetParent(parent.transform);
+                }
+                return pool[poolidx];
 			}			
 		}
 
 		if (grawable)
 		{
-			GameObject newob = CreateOneObj();
+			GameObject newob = CreateOneObj(parent);
 			newob.SetActive(true);
 			return newob;
 		}

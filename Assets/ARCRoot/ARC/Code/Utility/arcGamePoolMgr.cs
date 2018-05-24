@@ -6,7 +6,7 @@ public class arcGamePoolMgr<T> : MonoBehaviour where T : MonoBehaviour
 {
 	
 	static  public arcGamePoolMgr<T> Instance;
-
+    
 	public bool Grawable = false;
 	public int MaxObj = 10;
 	public int debugid = 0;
@@ -16,19 +16,20 @@ public class arcGamePoolMgr<T> : MonoBehaviour where T : MonoBehaviour
 	
 	public string[] prefabNames;
 	
-	void Awake()
-	{
+	public virtual void Awake()
+	{ 
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        else
+        {
+            Instance = this;
+        }
 
-		if (Instance != null)
-		{
-			Destroy(gameObject);
-		}
-		else
-		{
-			Instance = this;
-		}
-		
-	}
+        DontDestroyOnLoad(gameObject);
+    }
 	
 	// Use this for initialization
 	void Start ()
@@ -46,7 +47,6 @@ public class arcGamePoolMgr<T> : MonoBehaviour where T : MonoBehaviour
 			}
 		}
 		
-		DontDestroyOnLoad(gameObject);
 	}
 	
 	// Update is called once per frame
@@ -76,25 +76,25 @@ public class arcGamePoolMgr<T> : MonoBehaviour where T : MonoBehaviour
 		//return null;
 	}
 
-	public GameObject GetObjPrefab(GameObject prefab)
+	public GameObject GetObjPrefab(GameObject prefab, GameObject parent = null)
 	{
 		if (pooldict.ContainsKey(prefab.GetHashCode().ToString()))
 		{
-			return pooldict[prefab.GetHashCode().ToString()].GetObject();
+			return pooldict[prefab.GetHashCode().ToString()].GetObject(parent);
 		}
 		else
 		{
-			Debug.Log("Prefab pool not found! Create New: " + prefab.name);
+			//Debug.Log("Prefab pool not found! Create New: " + prefab.name);
 			
 			GameObjPool objpool = new GameObjPool();
 			objpool.grawable = Grawable;
 			objpool.maxobj = MaxObj;
 			objpool.prefabName = prefab.name;
 			objpool.templatePrefabObj = prefab;
-			objpool.Inital(gameObject);
+            objpool.Inital(gameObject);
 			//objpool.PreCreatePrefab(prefab, gameObject);
 			pooldict.Add(prefab.GetHashCode().ToString(), objpool);
-			return pooldict[prefab.GetHashCode().ToString()].GetObject();
+			return pooldict[prefab.GetHashCode().ToString()].GetObject(parent);
 		}
 
 	}
@@ -123,22 +123,29 @@ public class arcGamePoolMgr<T> : MonoBehaviour where T : MonoBehaviour
 	public void RestoreObj(GameObject obj)
 	{
 		obj.SetActive(false);
-	}
+        Vector3 oldscale = obj.transform.localScale;
+        obj.transform.SetParent(gameObject.transform);
+        obj.transform.localScale = oldscale;
+
+    }
 	
 	public void DisableAll()
-	{
-		foreach(KeyValuePair<string, GameObjPool> pa in pooldict)
-		{
-			pa.Value.DisableAll();
-		}
+    {
+        Dictionary<string, GameObjPool>.Enumerator etor = pooldict.GetEnumerator();
+        while (etor.MoveNext())
+        {
+            etor.Current.Value.DisableAll();
+        }
 	}
 	
 	public void DestoryAll()
-	{
-		foreach(KeyValuePair<string, GameObjPool> pa in pooldict)
-		{
-			pa.Value.DestoryAll();
-		}
+    {
+        Dictionary<string, GameObjPool>.Enumerator etor = pooldict.GetEnumerator();
+        while (etor.MoveNext())
+        {
+            etor.Current.Value.DestoryAll();
+        }
+
 		pooldict.Clear();
 	}
 

@@ -4,19 +4,19 @@ using System.Collections;
 public class arcSceneSingleton <T> : MonoBehaviour where T : MonoBehaviour
 { 
 	
-	public static T instance;
+	public static T Instance;
 
 	
 	void Awake()
 	{
 
-		if (instance != null)
+		if (Instance != null)
 		{
 			Debug.Log(this.ToString() + "multi instace!", this.gameObject);
 		}
 		else
 		{
-			instance = (T) FindObjectOfType(typeof(T));
+			Instance = (T) FindObjectOfType(typeof(T));
 		}
 
 		DerivedAwake();

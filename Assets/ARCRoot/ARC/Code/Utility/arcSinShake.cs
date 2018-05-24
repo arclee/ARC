@@ -155,22 +155,22 @@ public class arcSinShake : MonoBehaviour {
 
 	}
 
-	
-//	void OnGUI()
-//	{
-//		if (GUILayout.Button("shake"))
-//		{
-//			StartShake();
-//		}
-//		if (GUILayout.Button("stop fade"))
-//		{
-//			StopShake();
-//		}
-//		if (GUILayout.Button("shake on fade"))
-//		{
-//			StopShake(false);
-//		}
-//	}
+
+    //void OnGUI()
+    //{
+    //    if (GUILayout.Button("shake"))
+    //    {
+    //        StartShake();
+    //    }
+    //    if (GUILayout.Button("stop fade"))
+    //    {
+    //        StopShake();
+    //    }
+    //    if (GUILayout.Button("shake on fade"))
+    //    {
+    //        StopShake(false);
+    //    }
+    //}
 
 
 }

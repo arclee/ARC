@@ -25,20 +25,20 @@ public class arcSingleton<T> : MonoBehaviour where T : MonoBehaviour
 			return instance;
 		}
 	}
-
-	public virtual void DerivedAwake()
+    
+    public virtual void DerivedAwake()
 	{
 
 	}
-
+    
 	public void Awake()
 	{
-		if(instance != null)
+		if(instance != null && instance != this)
 		{
 			Destroy(gameObject);
 		}
 		else
-		{
+		{            
 			DontDestroyOnLoad(gameObject);
 			DerivedAwake();
 		}

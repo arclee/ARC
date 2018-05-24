@@ -209,14 +209,16 @@ public class arcFindObjectWin : EditorWindow
 		switch (da.typeidx)
 		{
 		case 0 :
-		{
-			Component cp = obj.GetComponent(da.name);
-			if (cp != null)
-			{
-				return true;
-			}
-			break;
-		}
+        {
+            Component cp = obj.GetComponent(da.name);                    
+            if (cp != null)
+            {
+                return true;
+            }
+                    
+		    break;
+        }
+        
 		case 1 :
 		{
 			if (obj.tag == da.name)
@@ -308,7 +310,7 @@ public class arcFindObjectWin : EditorWindow
 	{
 		mFindObjsH.Clear();
 		//所有物件.
-		GameObject[] finds = FindObjectsOfType(typeof(GameObject)) as GameObject[];
+		GameObject[] finds = Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[];
 		int totalcount = finds.Length;
 		int porced = 0;
 		mPorgBar.Show();

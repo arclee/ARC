@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class arcGameSoundPlayer : arcSceneSingleton<arcGameSoundPlayer> {
+public class arcSceneSoundPlayer : arcSceneSingleton<arcSceneSoundPlayer> {
 
 	public enum BGMSourceID
 	{
@@ -123,24 +123,7 @@ public class arcGameSoundPlayer : arcSceneSingleton<arcGameSoundPlayer> {
         }
     }
 
-    public void PauseBGM()
-    {
-        if (BGMCurrentSource)
-        {
-            BGMCurrentSource.Pause();
-        }
-    }
-
-    public void UnPauseBGM()
-    {
-        if (BGMCurrentSource)
-        {
-            BGMCurrentSource.UnPause();
-        }
-    }
-
-
-    public int GetCurrentBGMIdx()
+	public int GetCurrentBGMIdx()
 	{
 		return playBGMidx;
 	}

@@ -5,10 +5,12 @@ public class gameEffMgr : MonoBehaviour {
 	
 	public static gameEffMgr instance;
 	public GameObject[] effGameObjects;
-	void Awake()
+    public bool useGameObjPoolMgr = true;
+    void Awake()
 	{
 		instance = this;
-	}
+    }
+
 	// Use this for initialization
 	void Start () {
 	
@@ -23,7 +25,17 @@ public class gameEffMgr : MonoBehaviour {
 
 	public GameObject ShowEffect(int idx, Vector3 pos)
 	{
-		GameObject igo = gameObjPoolMgr.Instance.GetObjPrefab(effGameObjects[idx]);
+        GameObject igo = null;
+
+        if (useGameObjPoolMgr)
+        {
+            igo = gameObjPoolMgr.Instance.GetObjPrefab(effGameObjects[idx]);
+        }
+        else
+        {
+            igo = sceneObjPoolMgr.Instance.GetObjPrefab(effGameObjects[idx]);
+        }
+
 		igo.transform.position = pos;
 		return igo;
 
@@ -31,14 +43,43 @@ public class gameEffMgr : MonoBehaviour {
 
 	public GameObject ShowEffect(int idx, Vector3 pos, string func, object parm)
 	{
-		GameObject igo = gameObjPoolMgr.Instance.GetObjPrefab(effGameObjects[idx]);
+        GameObject igo = null;
+
+        if (useGameObjPoolMgr)
+        {
+            igo = gameObjPoolMgr.Instance.GetObjPrefab(effGameObjects[idx]);
+        }
+        else
+        {
+            igo = sceneObjPoolMgr.Instance.GetObjPrefab(effGameObjects[idx]);
+        }
+
 		igo.transform.position = pos;
 		igo.SendMessage(func, parm);
 		return igo;
 	}
 
+    public void RestoreEffect(GameObject go)
+    {
+        if (useGameObjPoolMgr)
+        {
+            gameObjPoolMgr.Instance.RestoreObj(go);
+        }
+        else
+        {
+            sceneObjPoolMgr.Instance.RestoreObj(go);
+        }
+    }
+
 	public void DestoryAll()
-	{
-		gameObjPoolMgr.Instance.DestoryAll();
+    {
+        if (useGameObjPoolMgr)
+        {
+            gameObjPoolMgr.Instance.DestoryAll();
+        }
+        else
+        {
+            sceneObjPoolMgr.Instance.DestoryAll();
+        }
 	}
 }

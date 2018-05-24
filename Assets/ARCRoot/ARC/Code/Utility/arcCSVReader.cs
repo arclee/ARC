@@ -31,35 +31,49 @@ public class arcCSVReader
 
 	}
 
-	void Parse()
+    public bool LoadFromString(string txt)
+    {
+        mFileName = "";
+        mData.Clear();
+        mTextAsset = null;
+        Parse(txt);
+        return true;
+    }
+
+    void Parse(string txt)
+    {
+        //取出每一行.
+        string[] lineArray = txt.Split(new string[] { "\n", "\r\n" }, System.StringSplitOptions.RemoveEmptyEntries);
+
+        //存放.
+        for (int i = 0; i < lineArray.Length; i++)
+        {
+            //略過.
+            if (lineArray[i].Length > 0)
+            {
+                if (lineArray[i][0] == '#' || lineArray[i][0] == '\r' || lineArray[i][0] == '\n')
+                {
+                    continue;
+                }
+            }
+
+            if (lineArray[i].Length > 1)
+            {
+                if ((lineArray[i][0] == '\\' && lineArray[i][1] == '\\') || (lineArray[i][0] == '/' && lineArray[i][1] == '/'))
+                {
+                    continue;
+                }
+            }
+
+            mData.Add(SplitCsvLine(lineArray[i]));
+        }
+    }
+
+    void Parse()
 	{
-		//取出每一行.
-		string [] lineArray = mTextAsset.text.Split(new string[] {"\n", "\r\n"}, System.StringSplitOptions.RemoveEmptyEntries);
+        Parse(mTextAsset.text);
 
-		//存放.
-		for(int i =0;i < lineArray.Length; i++)
-		{
-			//略過.
-			if (lineArray[i].Length > 0)
-			{
-				if (lineArray[i][0] == '#' || lineArray[i][0] == '\r' || lineArray[i][0] == '\n')
-				{
-				    continue;
-				}
-			}
-			
-			if (lineArray[i].Length > 1)
-			{
-				if ((lineArray[i][0] == '\\' && lineArray[i][1] == '\\') || (lineArray[i][0]=='/' && lineArray[i][1]=='/'))
-				{
-					continue;
-				}
-			}
-
-			mData.Add(SplitCsvLine(lineArray[i]));
-		}
-
-	}
+    }
 
 	// splits a CSV row 
 	static public string[] SplitCsvLine(string line)

@@ -6,7 +6,7 @@ public class gameDBMgr : MonoBehaviour {
 
 	public static gameDBMgr instance;
 
-	public Dictionary<string, arcCSVReader> dbs = new Dictionary<string, arcCSVReader>();
+	//public Dictionary<string, arcCSVReader> dbs = new Dictionary<string, arcCSVReader>();
 
 	public string dbpath;
 	public string[] preloadDbsName;
@@ -50,25 +50,49 @@ public class gameDBMgr : MonoBehaviour {
 		PreLoadDBs();
 	}
 
+    public void LoadDB(string name, string content)
+    {
+        arcCSVReader csvr = new arcCSVReader();
+        csvr.LoadFromString(content);
+        //dbs.Add(name, csvr);
+        csvr.DebugOutput();
+
+        gameDBData dbda = new gameDBData(csvr);
+        dbdatas.Add(name, dbda);
+    }
+
+    public void DeleteDB(string name)
+    {
+        //if (dbs.ContainsKey(name))
+        //{
+        //    dbs.Remove(name);
+        //}
+
+        if (dbdatas.ContainsKey(name))
+        {
+            dbdatas.Remove(name);
+        }
+    }
+
 	public void PreLoadDBs()
 	{
 		
-		dbs.Clear();
-		for (int i = 0; i < preloadDbsName.Length; i++)
-		{
-			arcCSVReader csvr = new arcCSVReader();
-			if (!csvr.LoadFromResource(dbpath + preloadDbsName[i]))
-			{
-				Debug.Log("Load db error:" + dbpath + preloadDbsName[i]);
-			}
-			else
-			{
-				Debug.Log("Load db success:" + dbpath + preloadDbsName[i]);
+		//dbs.Clear();
+		//for (int i = 0; i < preloadDbsName.Length; i++)
+		//{
+		//	arcCSVReader csvr = new arcCSVReader();
+		//	if (!csvr.LoadFromResource(dbpath + preloadDbsName[i]))
+		//	{
+		//		Debug.Log("Load db error:" + dbpath + preloadDbsName[i]);
+		//	}
+		//	else
+		//	{
+		//		Debug.Log("Load db success:" + dbpath + preloadDbsName[i]);
 				
-			}
-			dbs.Add(preloadDbsName[i], csvr);
-			csvr.DebugOutput();
-		}
+		//	}
+		//	dbs.Add(preloadDbsName[i], csvr);
+		//	csvr.DebugOutput();
+		//}
 
 		dbdatas.Clear();
 		for (int i = 0; i < preloadDbsName.Length; i++)
@@ -90,15 +114,15 @@ public class gameDBMgr : MonoBehaviour {
 
 	}
 
-	public arcCSVReader GetDB(string dbname)
-	{
-		if (dbs.ContainsKey(dbname))
-		{
-			return dbs[dbname];
-		}
+	//public arcCSVReader GetDB(string dbname)
+	//{
+	//	if (dbs.ContainsKey(dbname))
+	//	{
+	//		return dbs[dbname];
+	//	}
 
-		return null;
-	}	
+	//	return null;
+	//}	
 	
 	public gameDBData GetDBData(string dbname)
 	{
@@ -109,16 +133,4 @@ public class gameDBMgr : MonoBehaviour {
 		
 		return null;
 	}	
-
-
-	// Use this for initialization
-	void Start ()
-	{
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
 }

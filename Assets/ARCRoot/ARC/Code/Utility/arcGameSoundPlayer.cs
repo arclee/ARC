@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class arcGameSoundPlayer : arcSceneSingleton<arcGameSoundPlayer> {
+public class arcGameSoundPlayer : arcSingleton<arcGameSoundPlayer> {
 
 	public enum BGMSourceID
 	{
@@ -123,24 +123,7 @@ public class arcGameSoundPlayer : arcSceneSingleton<arcGameSoundPlayer> {
         }
     }
 
-    public void PauseBGM()
-    {
-        if (BGMCurrentSource)
-        {
-            BGMCurrentSource.Pause();
-        }
-    }
-
-    public void UnPauseBGM()
-    {
-        if (BGMCurrentSource)
-        {
-            BGMCurrentSource.UnPause();
-        }
-    }
-
-
-    public int GetCurrentBGMIdx()
+	public int GetCurrentBGMIdx()
 	{
 		return playBGMidx;
 	}
@@ -275,20 +258,23 @@ public class arcGameSoundPlayer : arcSceneSingleton<arcGameSoundPlayer> {
 	}
 */
 
-	public void PlayFX(int idx)
+	public AudioSource PlayFX(int idx)
 	{
-		//FXSources[0].clip = FxClips[idx];
-//		for (int i = 0; i < FXSources.Length; i++)
-//		{
-//			//if (!FXSources[i].isPlaying)
-//			{
-//				FXSources[i].PlayOneShot(FxClips[idx]);
-//			}
-//		}
-		FXSources[playFXidx].PlayOneShot(FxClips[idx]);
+        //FXSources[0].clip = FxClips[idx];
+        //		for (int i = 0; i < FXSources.Length; i++)
+        //		{
+        //			//if (!FXSources[i].isPlaying)
+        //			{
+        //				FXSources[i].PlayOneShot(FxClips[idx]);
+        //			}
+        //		}
+        AudioSource ret = FXSources[playFXidx];
+        FXSources[playFXidx].PlayOneShot(FxClips[idx]);
         playFXidx++;
 		playFXidx %= FXSources.Length;
-	}
+        return ret;
+
+    }
 
     //private void OnGUI()
     //{

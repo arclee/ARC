@@ -123,6 +123,23 @@ public class arcSceneSoundPlayer : arcSceneSingleton<arcSceneSoundPlayer> {
         }
     }
 
+    public void PauseBGM()
+    {
+        if (BGMCurrentSource)
+        {
+            BGMCurrentSource.Pause();
+        }
+    }
+
+    public void UnPauseBGM()
+    {
+        if (BGMCurrentSource)
+        {
+            BGMCurrentSource.UnPause();
+        }
+
+    }
+
 	public int GetCurrentBGMIdx()
 	{
 		return playBGMidx;
